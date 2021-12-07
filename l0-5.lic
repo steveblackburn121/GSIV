@@ -1,0 +1,124 @@
+if Char.name == UserVars.leader
+	send_to_script "lnet", "chat on #{UserVars.leader} group restart l0 now"
+	send_to_script "lnet", "unban #{Vars.ff1} on #{Char.name}"
+	send_to_script "lnet", "unban #{Vars.ff2} on #{Char.name}"
+	send_to_script "lnet", "unban #{Vars.ff3} on #{Char.name}"
+	send_to_script "lnet", "unban #{Vars.ff4} on #{Char.name}"
+	send_to_script "lnet", "unban #{Vars.ff5} on #{Char.name}"
+end
+
+
+Vars.op['resting_room_id']="10268"
+start_script('go2', [ "save rest#{UserVars.leader}=10268" ]);
+wait_while{ running?('go2') }
+
+Vars.op['hunting_room_id']="5954"
+start_script('go2', [ "save ftl#{UserVars.leader}=5953" ]);
+wait_while{ running?('go2') }
+
+Vars.op['hunting_boundaries']="5953, 5995"
+Vars.op['targets']="leaper, thyril, snake, relnak"
+Vars.op['hunting_prep_commands']="gird"
+Vars.op['spam']="false"
+Vars.op['pull']="true"
+Vars.op['priority']="true"
+
+Vars.op['rest_till_mana']="30"
+Vars.op['rest_till_exp']="30"
+Vars.op['rest_till_spirit']="5"
+
+Vars.op['fried']="100"
+Vars.op['oom']="1"
+
+
+Vars.op['flee_count']=""
+
+
+Vars.op['disable_commands']="wait 1, inc 1700" if Spell[1700].known?
+Vars.op['hunting_stance']="def" if Spell[1700].known?
+Vars.op['disable_commands']="wait 1, unarmed jab" if !Spell[1700].known?
+Vars.op['hunting_stance']="off" if !Spell[1700].known?
+
+
+if "#{Char.race}" == "Dwarf" or "#{Char.race}" == "Giantman"
+	Vars.op['encumbered']="20"
+	echo "strong"
+else
+	Vars.op['encumbered']="50"
+end
+
+if "#{Char.prof}" == "Empath"
+	echo "Empath"
+	Vars.op['resting_commands']="stow all"
+	Vars.op['resting_scripts']="rest, healself, gheal, disband, traderjoe, rest, trash, gwag, ghold"
+	Vars.op['hunting_commands']="wait 1, 1700 target"
+	Vars.op['hunting_commands_b']="script 1700, wait 2(xx)"
+	Vars.op['hunting_scripts']="checkright, alarm"
+	#Vars.op['signs']="9903"
+elsif "#{Char.prof}" == "Wizard"
+	echo "Wizard"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']=""
+	Vars.op['hunting_commands']="wait 1, 1700 target"
+	Vars.op['hunting_stance']="def"
+	Vars.op['hunting_scripts']="#blank, alarm, ftl"
+	#Vars.op['signs']="9903, 9904"
+elsif "#{Char.prof}" == "Sorcerer"
+	echo "Sorcerer"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']=""
+	Vars.op['hunting_commands']="wait 1, incant 702 (m5), 1700 target(!m5)"
+	Vars.op['hunting_scripts']="#alarm, ftl"
+	#Vars.op['signs']="9903"
+elsif "#{Char.prof}" == "Cleric"
+	echo "Cleric"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']=""
+	Vars.op['hunting_commands']="wait 1, incant 302 (m5), 1700 target(!m5)"
+	Vars.op['hunting_scripts']="alarm, ftl"
+	#Vars.op['signs']="9903"
+elsif "#{Char.prof}" == "Bard"
+	echo "Bard"
+	Vars.op['resting_commands']="stop 1018"
+	Vars.op['resting_scripts']=""
+	Vars.op['hunting_commands']="unarmed jab"
+	Vars.op['hunting_scripts']="alarm, ftl"
+	#Vars.op['signs']="9903, 9904"
+elsif "#{Char.prof}" == "Monk"
+	echo "Monk"
+	Vars.op['resting_commands']="meditate puncture"
+	Vars.op['resting_scripts']="waggle"
+	Vars.op['hunting_commands']="unarmed jab"
+	Vars.op['hunting_scripts']="alarm, ftl"
+	#Vars.op['signs']="9605"
+elsif "#{Char.prof}" == "Paladin"
+	echo "Paladin"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']="rest, gwag, leaderwait"
+	Vars.op['hunting_commands']="unarmed jab"
+	Vars.op['hunting_scripts']="alarm"
+	Vars.op['signs']="9906"
+elsif "#{Char.prof}" == "Warrior"
+	echo "Warrior"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']="waggle"
+	Vars.op['hunting_commands']="unarmed jab"
+	Vars.op['hunting_scripts']="alarm"
+	Vars.op['signs']="9906"
+elsif "#{Char.prof}" == "Ranger"
+	echo "Ranger"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']="waggle"
+	Vars.op['hunting_commands']="unarmed jab"
+	Vars.op['hunting_scripts']="alarm"
+	Vars.op['signs']=""
+elsif "#{Char.prof}" == "Rogue"
+	echo "Rogue"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']="waggle"
+	Vars.op['hunting_commands']="unarmed jab"
+	Vars.op['hunting_scripts']="alarm"
+	Vars.op['signs']=""
+end
+
+#;e Vars.op['resting_commands']="rest, waggle, gwag, leaderwait, gwag"

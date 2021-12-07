@@ -1,0 +1,38 @@
+Script.run('wsetter')
+
+#send_to_script "lnet", "chat group restart l100 now" if Char.name == UserVars.leader
+#fput "whisper group group restart lbandit now" if Char.name == UserVars.leader
+
+Vars.mob1 = "bandit"
+Vars.mob2 = "rogue"
+Vars.mob3 = "thief"
+Vars.mob4 = "brigand"
+Vars.mob5 = "mugger"
+Vars.mob6 = "highwayman"
+Vars.mob7 = "marauder"
+Vars.mob8 = "outlaw"
+Vars.mob9 = "thug"
+Vars.mob10 = "robber"
+
+Vars.op['rest_till_mana']="1"
+Vars.op['rest_till_exp']="999"
+
+Vars.op['always_flee_from']=""
+Vars.op['flee_count']="99"
+Vars.op['invalid_targets']=""
+
+#Vars.op['resting_room_id']="29089"
+#start_script('go2', [ "save restthief=29089" ]);
+#wait_while{ running?('go2') }
+
+#Vars.op['resting_room_id']="29253"
+
+#Vars.op['hunting_room_id']="29120"
+#Vars.op['hunting_prep_commands']="gird"
+
+#Vars.op['hunting_boundaries']="29026"
+
+Vars.op['targets']="#{Vars.mob1}, #{Vars.mob2}, #{Vars.mob3}, #{Vars.mob4}, #{Vars.mob5}, #{Vars.mob6}, #{Vars.mob7}, #{Vars.mob8}, #{Vars.mob9}, #{Vars.mob10}"
+
+Script.run "restroutine"
+Script.run "huntroutine"

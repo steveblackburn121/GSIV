@@ -1,0 +1,116 @@
+Script.run('wsetter')
+
+#send_to_script "lnet", "chat group restart l100 now" if Char.name == UserVars.leader
+#fput "whisper group group restart l90 now" if Char.name == UserVars.leader
+
+Vars.mob1 = "champion"
+Vars.mob2 = "griffin"
+Vars.mob3 = "herald"
+Vars.mob4 = "adept"
+Vars.mob5 = "construct"
+Vars.mob6 = "janissary"
+Vars.mob7 = "initiate"
+Vars.mob8 = "scout"
+Vars.mob9 = "gremlock"
+Vars.mob10 = "qyn'arj"
+
+Vars.op['always_flee_from']=""
+Vars.op['flee_count']="9"
+Vars.op['invalid_targets']="arm, arms"
+
+Vars.op['resting_room_id']="11993"
+start_script('go2', [ "save restl100=11993" ]);
+wait_while{ running?('go2') }
+
+Vars.op['hunting_room_id']="12046"
+Vars.op['hunting_prep_commands']="gird"
+
+Vars.op['hunting_boundaries']="11989, 12054"
+
+Vars.op['rest_till_exp']="101"
+Vars.op['fried']="101"
+Vars.op['fog_return']="0" 
+
+if "#{Char.race}" == "Dwarf" or "#{Char.race}" == "Giantman" and "#{Char.name}" == "#{UserVars.leader}"
+	Vars.op['encumbered']="20"
+	echo "strong"
+elsif "#{Char.race}" != "Dwarf" or "#{Char.race}" != "Giantman" and "#{Char.name}" == "#{UserVars.leader}"
+	Vars.op['encumbered']="50"
+else
+	Vars.op['encumbered']="99"
+end
+
+if "#{Char.prof}" == "Empath"
+	echo "Empath"
+	Vars.op['hunting_prep_commands']="gird"
+	Vars.op['resting_commands']="stow all"
+	Vars.op['resting_scripts']=""
+	#Vars.op['targets']="being, taint, gremlock, qyn'arj, construct, scout, initiate, janissary, adept, herald"
+	Vars.op['hunting_commands']="incant 1106 target(m50), 1700 target(!m50)"
+	Vars.op['hunting_commands_b']="incant 1700 target"
+	Vars.op['hunting_scripts']="briefCombat, spellstripper"
+	Vars.op['signs']="9805, 9806"
+
+elsif "#{Char.prof}" == "Wizard"
+	echo "Wizard"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']=""
+	#Vars.op['targets']="being, taint, gremlock, qyn'arj, #construct, scout, herald"
+	Vars.op['hunting_commands']="script killertofu"
+	Vars.op['hunting_commands_b']="incant 1700 target"
+	Vars.op['hunting_stance']="off"
+	Vars.op['hunting_scripts']="419, 911, speedyg, badjuju"
+	Vars.op['signs']="9805, 9806"
+
+elsif "#{Char.prof}" == "Sorcerer"
+	echo "Sorcerer"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']=""
+	#Vars.op['targets']="being, taint, gremlock, qyn'arj, #construct(b), scout, herald"
+	Vars.op['hunting_commands']="script killertofu"
+	Vars.op['hunting_commands_b']="incant 1700 target"
+	Vars.op['hunting_scripts']="badjuju"
+	Vars.op['signs']="9805, 9806"
+	
+elsif "#{Char.prof}" == "Cleric"
+	echo "Cleric"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']=""
+	Vars.op['hunting_commands']="script killertofu"
+	#Vars.op['targets']="being, taint, gremlock, qyn'arj, #construct(b), scout, herald"
+	Vars.op['hunting_commands_b']="1700 target"
+	Vars.op['hunting_scripts']="badjuju"
+	Vars.op['signs']="9805, 9806"
+elsif "#{Char.prof}" == "Bard"
+	echo "Bard"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']=""
+	#Vars.op['targets']="construct, being, taint, gremlock, qyn'arj, scout, initiate, janissary, adept"
+	Vars.op['hunting_commands']="script killertofu"
+	Vars.op['hunting_scripts']=""
+	Vars.op['signs']="9805, 9806"
+elsif "#{Char.prof}" == "Monk"
+	echo "Monk"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']=""
+	#Vars.op['targets']="construct, being, taint, gremlock, qyn'arj, scout, initiate, janissary, adept"
+	Vars.op['hunting_commands']="script killertofu"
+	Vars.op['hunting_scripts']="1216, 1235, spellstripper"
+	Vars.op['signs']="9805, 9806"
+elsif "#{Char.prof}" == "Paladin"
+	echo "Paladin"
+	Vars.op['resting_commands']=""
+	Vars.op['resting_scripts']="rest, waggle, leaderwait"
+	Vars.op['hunting_commands']="kick"
+	Vars.op['hunting_scripts']="alarm, #ftl"
+	Vars.op['signs']="9903, 9904"
+end
+
+Script.run "restroutine"
+Script.run "huntroutine"
+
+if (Char.prof == "Empath" or Char.prof == "Wizard" or Char.prof == "Sorcerer" or Char.prof == "Cleric")
+	Vars.op['targets']="#{Vars.mob1}, #{Vars.mob2}, #{Vars.mob3}, #{Vars.mob4}, #{Vars.mob5}, #{Vars.mob6}, #{Vars.mob7}, #{Vars.mob8}, #{Vars.mob9}"
+else
+	Vars.op['targets']="#{Vars.mob9}, #{Vars.mob1}, #{Vars.mob2}, #{Vars.mob3}, #{Vars.mob4}, #{Vars.mob5}, #{Vars.mob6}, #{Vars.mob7}, #{Vars.mob8}"
+end
