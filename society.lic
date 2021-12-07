@@ -1,0 +1,1000 @@
+def jfloo()
+	start_script "jfloo"
+	wait_while {running? 'jfloo'}
+end
+
+result = dothistimeout "society", 1, /You are a Master in the Order of Voln\./
+	if result =~ /You are a Master in the Order of Voln\./
+		echo "Mastered!"
+		exit
+	end
+
+if [14028, 9888].include?(Room.current.id)
+	echo "ok!"
+	jfloo = 1
+end
+
+jfloo() if jfloo == 1
+pause
+
+pause rand(5)
+
+fput "society"
+while line = get
+
+	if line =~/You are a Master in the Order of Voln\./
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+	elsif line =~/You are not a member of any society at this time/
+		fput "stow all"
+		start_script 'go2', ['13979']
+		wait_while {running? 'go2'}
+		waitfor "You feel calm and rested, at peace with the world and cleansed of all worldly pollutions"
+		fput "stand"
+		Script.run "rt"
+		fput "go bridge\n go inner port"
+		pause
+		start_script 'go2', ['21636']
+		wait_while {running? 'go2'}
+		waitfor "confirm that desire by repeating this oath"
+		fput "recite I pledge to aid and succor the Great Spirit Voln in his mission on Elanthia"
+		start_script 'go2', ['21584']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+		
+	elsif line =~/Return when you have earned Voln's favor\./
+		echo "NOPE!!!"
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+	elsif line =~/Order of Voln at step 1\./
+		start_script 'go2', ['21586']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task.|Eonak has little patience for those who tarry in their work."
+		start_script 'go2', ['6015']
+		wait_while {running? 'go2'}
+		loop{
+		fput "search machine"
+			while line = get
+				if line =~/beam at your new-found salvaged treasure/
+					start_script 'go2', ['10367']
+					wait_while {running? 'go2'}
+					fput "give metal to Aerhseth"
+					start_script 'go2', ['21586']
+					wait_while {running? 'go2'}
+					waitfor "Go now and continue your work\."
+					start_script 'rest'
+					wait_while {running? 'rest'}
+					exit
+				else
+					break
+				end
+			end
+		}
+		
+	elsif line =~/Order of Voln at step 2\./
+		start_script 'go2', ['25938']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task.|Then, return here to take your next step."
+		start_script 'go2', ['6093']
+		wait_while {running? 'go2'}
+		fput "stow all"
+
+		loop{
+		fput "forage bleeding rose"
+		pause
+			if checkright "bleeding heart rose"
+				start_script 'go2', ['5868']
+				wait_while {running? 'go2'}
+				fput "put rose"
+				start_script 'go2', ['25938']
+				wait_while {running? 'go2'}
+				waitfor "Go now and continue your work\."
+				start_script 'rest'
+				wait_while {running? 'rest'}
+				exit
+			else
+				waitrt?
+			end
+		}
+		
+	elsif line =~/Order of Voln at step 3/
+		start_script 'go2', ['25939']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task.|Do not forget to buy a round for the patrons who are enjoying your ballad."
+		start_script 'jfloo'
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['bank']
+		wait_while {running? 'go2'}
+		coins = (Char.level * 100) + 100
+		fput "withdraw #{coins} silver"
+		start_script 'go2', ['10071']
+		wait_while {running? 'go2'}
+		fput "put #{coins} silver\n sing I dance to honor Lord Cholen; Who bring us joy and fun;I sing such greatly praises;Today and forever more;Be joyous for all time, my friends!"
+		waitfor "You feel intense satisfaction at a task well done."
+		start_script 'jfloo'
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['25939']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+		
+	elsif line =~/Order of Voln at step 4/
+		start_script 'go2', ['25939']
+		wait_while {running? 'go2'}
+		fput "east"
+		waitfor "Return here when you have completed this task", "With this knowledge, go now and finish your task, and return here afterward"
+		fput "west"
+		start_script 'go2', ['5834']
+		wait_while {running? 'go2'}
+		fput "recite Lord Jastev is a sullen soul.;Lord Jastev is artistic indeed.;Lord Jastev is the self-possessed.;Lord Jastev is morbid true,;Lord Jastev is serious, too."
+		waitfor "You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done."
+		start_script 'go2', ['25939']
+		wait_while {running? 'go2'}
+		fput "east"
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+		
+	elsif line =~/Order of Voln at step 5/
+		start_script 'go2', ['25944']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task", "Go to her altar in the Rambling Meadows and offer Imaera a sprig of her lace"
+		start_script 'go2', ['10375']
+		wait_while {running? 'go2'}
+		fput "stow all"
+		loop{
+		fput "forage lace"
+			if checkright "Imaera's Lace"
+				start_script 'go2', ['6011']
+				wait_while {running? 'go2'}
+				fput "offer lace"
+				waitfor "You feel overwhelmed by a sudden tingling sensation that seems to course through your body"
+				start_script 'go2', ['25944']
+				wait_while {running? 'go2'}
+				waitfor "Go now and continue your work\."
+				start_script 'rest'
+				wait_while {running? 'rest'}
+				exit
+			else
+				waitrt?
+			end
+		}
+		
+	elsif line =~/Order of Voln at step 6/
+		fput "stow all\n get coral"
+		pause
+			if checkright "coral"
+				start_script 'go2', ['25967']
+				wait_while {running? 'go2'}
+				waitfor "Return here when you have completed this task.|I suggest that you do not delay in honoring Lord Charl."
+				start_script 'go2', ['10119']
+				wait_while {running? 'go2'}
+				fput "get my coral\n put coral"
+				waitfor "You feel overwhelmed by a sudden tingling sensation that seems to course through your body"
+				start_script 'go2', ['25967']
+				wait_while {running? 'go2'}
+				waitfor "Go now and continue your work\."
+				start_script 'rest'
+				wait_while {running? 'rest'}
+				exit
+			else
+				echo "YOU NEED CORAL, RESTART THE SCRIPT ONCE YOU HAVE SOME!!!"
+				exit
+			end
+		
+	elsif line =~/Order of Voln at step 7/
+		start_script 'go2', ['25966']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task.|Wrestle well, and you will complete the task."
+		start_script 'go2', ['13495']
+		wait_while {running? 'go2'}
+		fput "stow all\n say Kai, I challenge you to wrestle!"
+	    pause 5
+		fput "punch kai"
+	    waitrt?
+	    fput "kick kai"
+	    waitrt?
+	    fput "throw kai"
+	    waitrt?
+	    waitfor "You feel overwhelmed by a sudden tingling sensation that seems to course through your body"
+		fput "out"
+		start_script 'go2', ['25966']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+	elsif line =~/Order of Voln at step 8/	
+		start_script 'go2', ['25965']
+		wait_while {running? 'go2'}
+		waitfor "Bring the light and warmth of the sun into a place that sees little life normally|a votive from the cleric's shop, lit from the fire here, will suffice."
+		fput "stow all"
+		start_script 'go2', ['bank']
+		wait_while {running? 'go2'}
+		fput "withdraw 100"
+		start_script 'go2', ['10372']
+		wait_while {running? 'go2'}
+		fput "order 1"
+		pause
+		fput "buy"
+		start_script 'go2', ['25965']
+		wait_while {running? 'go2'}
+		fput "light my votive with fire"
+		start_script 'go2', ['10685']
+		wait_while {running? 'go2'}
+		fput "wave my votive\n drop my votive"
+		waitfor "You feel overwhelmed by a sudden tingling sensation that seems to course through your body"
+		start_script 'go2', ['25965']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+	elsif line =~/Order of Voln at step 9/
+		fput "stow all\n get acantha leaf"
+		pause
+			if checkright
+				start_script 'go2', ['25964']
+				wait_while {running? 'go2'}
+				waitfor "Return here when you have completed this task|healing herbs and then pray"
+				start_script 'go2', ['10370']
+				wait_while {running? 'go2'}
+				result = dothistimeout "get ac leaf\n put my leaf on altar\n pray", 1, /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            if result =~ /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            else 
+		            	echo "alarmbot"
+		            	pause_script
+		        	end
+				start_script 'go2', ['25964']
+				wait_while {running? 'go2'}
+				waitfor "Go now and continue your work\."
+				start_script 'rest'
+				wait_while {running? 'rest'}
+				exit
+			else
+				echo "YOU NEED ACANTHA LEAF!!!"
+				exit
+			end
+	
+	elsif line =~/Order of Voln at step 10\./
+		start_script 'go2', ['25963']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|A correct answer is needed to please Ronan"
+		start_script 'go2', ['13494']
+		wait_while {running? 'go2'}
+		fput "lie\n rest"
+		waitfor "At least until tomorrow morning comes"
+		
+			result = dothistimeout "say shadow\n stand", 1, /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+	            if result =~ /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+	            else 
+	            	echo "alarmbot"
+	            	pause_script
+	        	end
+		start_script 'go2', ['25963']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+	
+	elsif line =~/Order of Voln at step 11\./
+		start_script 'go2', ['25962']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|Remember that Lumnis values those who seek out their own answers rather than come to her for help"
+		start_script "jfloo"
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['13233']
+		wait_while {running? 'go2'}
+		fput "bow banner\n look banner"
+		pause 5
+						start_script 'go2', ['13234']
+						wait_while {running? 'go2'}
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						start_script 'go2', ['13234']
+						wait_while {running? 'go2'}
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						start_script 'go2', ['13234']
+						wait_while {running? 'go2'}
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						start_script 'go2', ['13234']
+						wait_while {running? 'go2'}
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						start_script 'go2', ['13234']
+						wait_while {running? 'go2'}
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						start_script 'go2', ['13234']
+						wait_while {running? 'go2'}
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "w"
+						fput "go door\n pray\n stand"
+						sleep 0.2
+						waitrt?
+						fput "out"
+						fput "stand"
+						waitrt?
+						fput "out"
+						start_script 'go2', ['13234']
+						wait_while {running? 'go2'}
+						start_script "jfloo"
+						wait_while {running? 'jfloo'}
+						start_script 'go2', ['25962']
+						wait_while {running? 'go2'}
+						waitfor "Go now and continue your work\."
+						start_script 'rest'
+						wait_while {running? 'rest'}
+						exit
+						
+	elsif line =~/Order of Voln at step 12/
+		start_script 'go2', ['25961']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|Do not stand in his presence"
+		start_script 'go2', ['3539']
+		wait_while {running? 'go2'}
+		result = dothistimeout "kneel\n say I have come to honor Koar, master of mana", 1, /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            if result =~ /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            else 
+		            	echo "alarmbot"
+		            	pause_script
+		        	end
+		start_script 'go2', ['25961']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+	elsif line =~/Order of Voln at step 13\./
+		start_script 'go2', ['25960']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|You will know if the message has been received"
+		start_script "jfloo"
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['1836']
+		wait_while {running? 'go2'}
+		result = dothistimeout "say you have not been forgotten", 1, /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            if result =~ /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            else 
+		            	echo "alarmbot"
+		            	pause_script
+		        	end
+		start_script "jfloo"
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['25960']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+	elsif line =~/Order of Voln at step 14\./
+		start_script 'go2', ['25957']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|If Eonak accepts your homage, you will know it."
+		start_script 'go2', ['bank']
+		wait_while {running? 'go2'}
+		fput "withdraw 2500"
+		start_script "jfloo"
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['16727']
+		wait_while {running? 'go2'}
+		pause
+		result = dothistimeout "pray anvil\n pray hammer", 1, /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            if result =~ /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            else 
+		            	echo "alarmbot"
+		            	pause_script
+		        	end
+		start_script 'go2', ['739']
+		wait_while {running? 'go2'}
+		start_script "jfloo"
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['25957']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+	elsif line =~/Order of Voln at step 15\./
+		start_script 'go2', ['25956']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|Show respect at the altar and you will know when Oleani approves"
+		start_script 'go2', ['bank']
+		wait_while {running? 'go2'}
+		fput "withdraw 1000"
+		start_script 'go2', ['gemshop']
+		wait_while {running? 'go2'}
+		fput "east"
+		fput "stow all\n order 1\n buy"
+		fput "order 2\n buy"
+		start_script 'go2', ['10268']
+		wait_while {running? 'go2'}
+		result = dothistimeout "put my band on altar\n put my ring on altar\n bow", 1, /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            if result =~ /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            else 
+		            	echo "alarmbot"
+		            	pause_script
+		        	end
+		start_script 'go2', ['25956']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+		
+	elsif line =~/Order of Voln at step 16\./
+		start_script 'go2', ['25955']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|If you hear Cholen's laughter, you will know your task is done."
+		start_script 'go2', ['10437']
+		wait_while {running? 'go2'}
+		echo "ACT AND HAVE SOMEONE LAUGH AT YOU!!!"
+		waitfor "You feel intense satisfaction at a task well done."
+		start_script 'go2', ['25955']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+	elsif line =~/Order of Voln at step 17\./
+		start_script 'go2', ['25954']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|Then, touch the shrine and you will know what Jastev wants you to know."
+		start_script 'go2', ['10176']
+		wait_while {running? 'go2'}
+		pause
+		result = dothistimeout "touch shrine", 1, /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            if result =~ /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            else 
+		            	echo "alarmbot"
+		            	pause_script
+		        	end
+		start_script 'go2', ['25954']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+	elsif line =~/Order of Voln at step 18\./
+		start_script 'go2', ['25953']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|She is very sensitive and you must do this correctly or you will fail to please her and she will leave"
+		start_script 'go2', ['6011']
+		wait_while {running? 'go2'}
+		fput "kneel\n pray" 
+		waitfor "deer"
+		result = dothistimeout "bow deer", 1, /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            if result =~ /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            else 
+		            	echo "alarmbot"
+		            	pause_script
+		        	end
+		start_script 'go2', ['25953']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+	elsif line =~/Order of Voln at step 19/
+		start_script 'go2', ['25952']
+		wait_while {running? 'go2'}
+		waitfor "Toss some coins into the nearby lake where the dock stretches out over fear|I detest leading initiates by the hand"
+		start_script 'go2', ['bank']
+		wait_while {running? 'go2'}
+			withdraw = Char.level * 100
+			fput "withdraw #{withdraw} silvers"
+		pause
+		start_script 'go2', ['10119']
+		wait_while {running? 'go2'}
+		result = dothistimeout "drop #{withdraw} silvers", 1, /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            if result =~ /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            else 
+		            	echo "alarmbot"
+		            	pause_script
+		        	end
+		start_script 'go2', ['25952']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+		elsif line =~/Order of Voln at step 20\./
+		start_script 'go2', ['25951']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|You will know if Kai is pleased"
+		start_script 'go2', ['bank']
+		wait_while {running? 'go2'}
+		fput "withdraw 3000"
+		start_script 'go2', ['weaponshop']
+		wait_while {running? 'go2'}
+		fput "order 1\n buy\n stow all"
+		start_script 'go2', ['town']
+		wait_while {running? 'go2'}
+		start_script "jfloo"
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['9609']
+		wait_while {running? 'go2'}
+		result = dothistimeout "get my stil\n put stil", 1, /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            if result =~ /You feel overwhelmed by a sudden tingling sensation that seems to course through your body|You feel intense satisfaction at a task well done/
+		            else 
+		            	echo "alarmbot"
+		            	pause_script
+		        	end
+		start_script 'go2', ['739']
+		wait_while {running? 'go2'}
+		start_script "jfloo"
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['25951']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+		elsif line =~/Order of Voln at step 21\./
+		start_script 'go2', ['25950']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task|bring Phoen's light to part the darkness there."
+		fput "stow all"
+		start_script 'go2', ['bank']
+		wait_while {running? 'go2'}
+		fput "withdraw 100"
+		pause
+		start_script 'go2', ['10372']
+		wait_while {running? 'go2'}
+		fput "order 1"
+		pause
+		fput "buy"
+		pause
+		start_script 'go2', ['25965']
+		wait_while {running? 'go2'}
+		fput "light my votive with fire"
+		pause
+		start_script 'go2', ['town']
+		wait_while {running? 'go2'}
+		start_script "jfloo"
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['1830']
+		wait_while {running? 'go2'}
+		fput "wave my votive\n drop votive"
+		waitfor "You feel overwhelmed by a sudden tingling sensation that seems to course through your body"
+		start_script "jfloo"
+		wait_while {running? 'jfloo'}
+		start_script 'go2', ['25950']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+		elsif line =~/Order of Voln at step 22\./
+		start_script 'go2', ['25949']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task.|If Lorminstra is pleased,  you will know it."
+		echo "MAKE SURE YOU HAVE AT LEAST 2 DEEDS, THEN ;UNPAUSE SOCIETY"
+		pause_script "society"
+		start_script 'go2', ['10370']
+		wait_while {running? 'go2'}
+		fput "touch altar"
+		echo "SAY Lorminstra, give (person) my deed. THEN ;UNPAUSE SOCIETY"
+		pause_script "society"
+		start_script 'go2', ['25949']
+		wait_while {running? 'go2'}
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+		elsif line =~/Order of Voln at step 23\./
+		start_script 'go2', ['25948']
+		wait_while {running? 'go2'}
+		waitfor "Return here when you have completed this task\.|The monk seems to be hiding a grin"
+		fput "jump pit"
+		pause 20
+		fput "stand"
+		waitrt?
+		pause 1
+		
+		loop{
+		result = dothistimeout "search", 1, /simple stone-carved door/
+			if result =~ /simple stone-carved door/
+				pause 4
+				fput "go door"
+				break
+			else
+				pause 4
+			end
+		}
+		pause
+
+		loop{
+		result = dothistimeout "sniff", 1, /scent of a battlefield/
+			if result =~ /scent of a battlefield/
+				pause 4
+				fput "go battlefield"
+				break
+			else
+				pause 4
+			end
+		}
+
+		pause
+
+		loop{
+		result = dothistimeout "listen", 1, /sound of a singing nightingale/
+			if result =~ /sound of a singing nightingale/
+				pause 4
+				fput "go night"
+				break
+			else
+				pause 4
+			end
+		}
+
+		waitfor "simply NOD to me and we'll begin testing your vision and reaction time"
+
+		fput "nod ronan"
+
+		while line = get
+			if line =~ /the blade is leveled for a clean swipe at your head/
+				fput "duck"
+			elsif line =~ /you notice that Ronan keeps glancing at your feet/
+				fput "jump"
+			elsif line =~ /the spear is set right at the height of your chest/
+				fput "fall"
+			elsif line =~ /you can clearly see his not too subtle feint to your left/
+				fput "lean right"
+			elsif line =~ /you notice the path he's taking towards your right side/
+				fput "lean left"
+			elsif line =~ /and you fall asleep/
+				fput "roll"
+			elsif line =~ /You feel intense satisfaction at a task well done/
+				break
+			end
+		end
+
+		waitfor "Go now and continue your work\."
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+		elsif line =~/Order of Voln at step 24\./
+			start_script 'go2', ['25947']
+			wait_while {running? 'go2'}
+			waitfor "Take this medallion|I see you already have a medallion"
+			fput "wear medallion"
+			start_script 'go2', ['bank']
+			wait_while {running? 'go2'}
+			fput "withdraw 2500 silvers"
+		
+			loop{
+				
+				result = dothistimeout "read medallion", 1, /The home of order to the Vaalor guardians|A pale limestone altar in a glade of a wooded town|The heart of activity for every guest of House Illistim|Strange bleached troll bones lie piled under a mountain|From the yawning mouth of an aqueduct, water falls in a rainbow of colors|You have done well in finding this place|There is nothing there to read/
+				
+				if result =~ /You have done well in finding this place/
+					pause
+				elsif result =~ /The home of order to the Vaalor guardians/
+					start_script 'go2', ['3520']
+					wait_while {running? 'go2'}
+					fput "read med"
+				elsif result =~ /Strange bleached troll bones lie piled under a mountain/
+					start_script 'go2', ['9514']
+					wait_while {running? 'go2'}
+					fput "read med"
+				elsif result =~ /From the yawning mouth of an aqueduct, water falls in a rainbow of colors/
+					start_script 'go2', ['9673']
+					wait_while {running? 'go2'}
+					fput "read med"
+
+				elsif result =~ /The heart of activity for every guest of House Illistim/
+					start_script 'go2', ['188']
+					wait_while {running? 'go2'}
+					fput "read med"
+
+				elsif result =~ /A pale limestone altar in a glade of a wooded town/
+					start_script 'go2', ['4632']
+					wait_while {running? 'go2'}
+					fput "read med"
+
+				elsif result =~ /There is nothing there to read/
+					break
+				
+				else
+					echo "alarmbot"
+					pause_script "society"
+				end
+			
+			}
+
+		start_script 'go2', ['25947']
+		wait_while {running? 'go2'}
+		
+		waitfor "Go now and continue your work\."
+		Script.run "rest"
+
+	elsif line =~ /Order of Voln at step 25\./
+		start_script 'go2', ['25946']
+		wait_while {running? 'go2'}
+		waitfor "where only masters of our Order may attend their thoughts and seek solitude and comfort\."		
+		start_script 'rest'
+		wait_while {running? 'rest'}
+		exit
+
+		end
+end
