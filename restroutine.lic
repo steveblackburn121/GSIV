@@ -1,0 +1,31 @@
+if Char.name == Vars.leader
+
+	if Char.level >= 80
+		Vars.op['resting_scripts']="brn, yourturn, healself, sheal, groupcheck, 203, givelead, ploot, rest, takelead, ghold, ttw, gwag, myturn, bcheck"
+	elsif Vars.mob1 == "griffin"
+		Vars.op['resting_scripts']="brn, 213, healself, 203, givelead, 10834, traderJoe, xadvguild, 11804, rest, takelead, ghold, ttw, gwag, waitasec" if Char.name == Vars.leader
+	elsif Vars.mob1 == "griffin" or Vars.mob1 == "being" or Vars.mob1 == "champion"  or Vars.mob1 == "adept"
+		Vars.op['resting_scripts']="brn, 213, healself, 203, wof, givelead, 10834, traderJoe, 11804, rest, takelead, ghold, ttw, gwag, waitasec" if Char.name == Vars.leader
+	elsif Vars.mob1 == "shrickhen"
+		Vars.op['resting_scripts']="brn, 213, yourturn, healself, sheal, 203, return, traderJoe, symbolofseeking, rest, 213, ttw, gwag, myturn" if Char.name == Vars.leader
+	else
+		Vars.op['resting_scripts']="brn, 213, yourturn, healself, sheal, 203, givelead, traderjoe, rest, takelead, ghold, ttw, gwag, myturn"
+	end
+
+else
+
+	Vars.op['resting_scripts']="213" if (Char.prof == "Empath" or Char.prof == "Cleric")
+	Vars.op['resting_scripts']="gwag" if (Char.prof != "Empath" and Char.prof != "Cleric")
+
+end
+
+if "#{Char.race}" == "Dwarf" or "#{Char.race}" == "Giantman"
+	Vars.op['encumbered']="999"
+	echo "strong"
+elsif Char.prof == "Monk" or Char.prof == "Bard" or Char.prof == "Rogue" or Char.prof == "Ranger" or Char.prof == "Warrior" or Char.prof == "Paladin"
+	Vars.op['encumbered']="999"
+else
+	Vars.op['encumbered']="999"
+end
+
+Vars.op['rest_till_spirit']="1"

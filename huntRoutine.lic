@@ -1,0 +1,66 @@
+if Char.name == Vars.leader
+
+	Vars.op['hunting_scripts']="briefcombat, checkright, stopper, heal2"
+	Vars.op['loot_script']="slootbeta"
+	Vars.op['wander_wait']=0.1
+	Vars.op['delay_loot']=false
+
+	if Char.prof == "Empath"
+		Vars.op['hunting_commands']="inc 1106 target(m100), 1700 target(!m100)" if Vars.mob != "spectre" or Vars.mob != "lord"
+		Vars.op['hunting_commands']="script 1700" if Vars.mob == "spectre" or Vars.mob == "lord"
+		Vars.op['hunting_scripts']="bstun, bstop, unstun, clearemout, 140, heal2" if Char.level >= 75
+		Vars.op['hunting_scripts']="checkright, stopper, unstun, heal2, badjuju" if Char.level < 75
+	elsif Char.prof == "Wizard"
+		Vars.op['hunting_commands']="inc 903 target(m100), 1700 target(!m100)"
+		Vars.op['hunting_scripts']="919, 419, 911, checkright, stopper" if (Vars.mob1 == "champion" or Vars.mob1 == "griffin")
+		Vars.op['hunting_scripts']="419, 911, checkright, stopper" if (Vars.mob1 != "champion" or Vars.mob1 != "griffin")
+	elsif Char.prof == "Sorcerer"
+		Vars.op['hunting_commands']="inc 702 target(m100), 1700 target(!m100)"
+		Vars.op['hunting_scripts']="140, checkright, stopper" if Vars.mob1 == "champion"
+		Vars.op['hunting_scripts']="checkright, stopper" if Vars.mob1 != "champion"
+	elsif Char.prof == "Cleric"
+		Vars.op['hunting_commands']="inc 302 target(m100), 1700 target(!m100)"
+		Vars.op['hunting_scripts']="140, checkright, stopper" if Vars.mob1 == "champion"
+		Vars.op['hunting_scripts']="checkright, stopper" if Vars.mob1 != "champion"
+	elsif Char.prof == "Bard"
+		Vars.op['hunting_commands']="incant 1008(flying), kick(!flying)"
+		Vars.op['hunting_scripts']="1035, checkright, stopper"
+	elsif Char.prof == "Monk"
+		Vars.op['hunting_commands']="kick"
+		Vars.op['hunting_scripts']="1216, checkright, stopper"
+	elsif Char.prof == "Rogue"
+		Vars.op['hunting_commands']="kick"
+		Vars.op['hunting_scripts']="checkright, stopper"
+	end
+
+else
+
+	if Char.level >= 75
+		Vars.op['hunting_commands']="script bandittofu"
+		Vars.op['quick_commands']="script bandittofu"
+		Vars.op['hunting_scripts']="unstun, bstun, 140" if Char.prof == "Empath"
+		Vars.op['hunting_scripts']="unstun, bstun, 140" if Char.prof == "Cleric"
+		Vars.op['hunting_scripts']="unstun, bstun, 140" if Char.prof == "Sorcerer"
+		Vars.op['hunting_scripts']="1216, bstun" if Char.prof == "Monk"
+		Vars.op['hunting_scripts']="bstun" if Char.prof == "Warrior"
+		Vars.op['hunting_scripts']="bstun" if Char.prof == "Ranger"
+		Vars.op['hunting_scripts']="911, 419, 919, bstun" if Char.prof == "Wizard"
+	else
+		Vars.op['hunting_commands']="script killertofu"
+		Vars.op['hunting_scripts']="unstun, bstun" if Char.prof == "Empath"
+		Vars.op['hunting_scripts']="unstun, bstun" if Char.prof == "Cleric"
+		Vars.op['hunting_scripts']="unstun, bstun" if Char.prof == "Sorcerer"
+		Vars.op['hunting_scripts']="1216, 1235, bstun" if Char.prof == "Monk"
+		Vars.op['hunting_scripts']="bstun" if Char.prof == "Warrior"
+		Vars.op['hunting_scripts']="bstun" if Char.prof == "Ranger"
+		Vars.op['hunting_scripts']="911, 419, bstun" if Char.prof == "Wizard"
+		Vars.op['hunting_scripts']="spellstripper" if Char.prof == "Ranger" and (Vars.mob1 == "griffin" or Vars.mob1 == "being" or Vars.mob1 == "dogmatist" or Vars.mob1 == "construct")
+		Vars.op['hunting_scripts']="1216, spellstripper, unstun" if Char.prof == "Monk" and (Vars.mob1 == "griffin" or Vars.mob1 == "being" or Vars.mob1 == "dogmatist" or Vars.mob1 == "construct")
+		Vars.op['hunting_scripts']="spellstripper" if Char.prof == "Bard" and (Vars.mob1 == "griffin" or Vars.mob1 == "being" or Vars.mob1 == "dogmatist" or Vars.mob1 == "construct")
+		Vars.op['hunting_scripts']="spellstripper" if Char.prof == "Warrior" and (Vars.mob1 == "griffin" or Vars.mob1 == "being" or Vars.mob1 == "dogmatist" or Vars.mob1 == "construct")
+		Vars.op['hunting_scripts']="spellstripper" if Char.prof == "Paladin" and (Vars.mob1 == "griffin" or Vars.mob1 == "being" or Vars.mob1 == "dogmatist" or Vars.mob1 == "construct")
+	end	
+end
+
+Vars.op['flee_count']="9"
+#Vars.op['flee_count']="4" if Vars.mob1 != "bandit"
