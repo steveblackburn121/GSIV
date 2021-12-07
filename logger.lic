@@ -1,0 +1,20 @@
+
+if (Char.prof == "Empath")
+	start_script('login', [ "#{Vars.wizard}"]) if !checkpcs "#{Vars.wizard}" and Vars.wizard != "xxx"
+	pause 3 if !checkpcs "#{Vars.wizard}" and Vars.wizard != "xxx"
+	start_script('login', [ "#{Vars.sorcerer}"]) if !checkpcs "#{Vars.sorcerer}" and Vars.sorcerer != "xxx"
+	pause 3 if !checkpcs "#{Vars.sorcerer}" and Vars.sorcerer != "xxx"
+	start_script('login', [ "#{Vars.cleric}"]) if !checkpcs "#{Vars.cleric}" and Vars.cleric != "xxx"
+	pause 3 if !checkpcs "#{Vars.cleric}" and Vars.cleric != "xxx"
+	start_script('login', [ "#{Vars.bard}"]) if !checkpcs "#{Vars.bard}" and Vars.bard != "xxx"
+	pause 3 if !checkpcs "#{Vars.bard}" and Vars.bard != "xxx"
+	start_script('login', [ "#{Vars.monk}"]) if !checkpcs "#{Vars.monk}" and Vars.monk != "xxx"
+	pause 3 if !checkpcs "#{Vars.monk}" and Vars.monk != "xxx"
+	start_script('login', [ "#{Vars.warrior}"]) if !checkpcs "#{Vars.warrior}" and Vars.warrior != "xxx"
+	pause 3 if !checkpcs "#{Vars.warrior}" and Vars.warrior != "xxx"
+	start_script('login', [ "#{Vars.paladin}"]) if !checkpcs "#{Vars.paladin}" and Vars.paladin != "xxx"
+	pause 3 if !checkpcs "#{Vars.paladin}" and Vars.paladin != "xxx"
+	start_script('login', [ "#{Vars.ranger}"]) if !checkpcs "#{Vars.ranger}" and Vars.ranger != "xxx"
+	pause 3 if !checkpcs "#{Vars.ranger}" and Vars.ranger != "xxx"
+	pause 5
+end

@@ -1,0 +1,43 @@
+if Vars.f2p == '1'
+	fput "look"
+	start_script('waggle')
+	wait_while{ running?('waggle') }
+	exit
+end
+
+fput "look"
+
+Script.run "waggle"
+
+pause 0.1
+
+Script.run "waggle", Vars.empath if checkpcs Vars.empath
+fput "armor reinforce #{Vars.empath}" if checkpcs Vars.empath and Char.prof == "Warrior"
+pause 0.1
+Script.run "waggle", Vars.wizard if checkpcs Vars.wizard
+fput "armor reinforce #{Vars.wizard}" if checkpcs Vars.wizard and Char.prof == "Warrior"
+pause 0.1
+Script.run "waggle", Vars.sorcerer if checkpcs Vars.sorcerer
+fput "armor reinforce #{Vars.sorcerer}" if checkpcs Vars.sorcerer and Char.prof == "Warrior"
+pause 0.1
+Script.run "waggle", Vars.cleric if checkpcs Vars.cleric
+fput "armor reinforce #{Vars.cleric}" if checkpcs Vars.cleric and Char.prof == "Warrior"
+pause 0.1
+Script.run "waggle", Vars.bard if checkpcs Vars.bard
+fput "armor reinforce #{Vars.bard}" if checkpcs Vars.bard and Char.prof == "Warrior"
+pause 0.1
+Script.run "waggle", Vars.monk if checkpcs Vars.monk
+fput "armor reinforce #{Vars.monk}" if checkpcs Vars.monk and Char.prof == "Warrior"
+pause 0.1
+Script.run "waggle", Vars.warrior if checkpcs Vars.warrior
+fput "armor reinforce #{Vars.warrior}" if checkpcs Vars.warrior and Char.prof == "Warrior"
+pause 0.1
+Script.run "waggle", Vars.paladin if checkpcs Vars.paladin
+fput "armor reinforce #{Vars.paladin}" if checkpcs Vars.paladin and Char.prof == "Warrior"
+pause 0.1
+Script.run "waggle", Vars.rogue if checkpcs Vars.rogue
+fput "armor reinforce #{Vars.rogue}" if checkpcs Vars.rogue and Char.prof == "Warrior"
+pause 0.1
+Script.run "waggle", Vars.ranger if checkpcs Vars.ranger
+fput "armor reinforce #{Vars.ranger}" if checkpcs Vars.ranger and Char.prof == "Warrior"
+pause 0.1
