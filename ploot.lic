@@ -1,0 +1,66 @@
+fput "stow #{checkright}\n wear #{checkleft}\n stow #{checkleft}" if checkleft or checkright
+
+result = dothistimeout "look in #{Vars.lootsack}", 1, /box|chest|coffer|strongbox|trunk|case|reliquary/
+	
+	if result =~ /box|chest|coffer|strongbox|trunk|case|reliquary/ or checkright
+		start_script('go2', [ "bank", '_disable_confirm_' ]);
+		wait_while{ running?('go2') }
+		fput "depo all\n withdraw 5000"
+		start_script "locksmith"
+		wait_while{ running?('locksmith') }
+		pause
+		start_script('poolparty', [ "loot" ]);
+		wait_while{ running?('poolparty') }
+	end
+
+result = dothistimeout "look in #{Vars.gemsack}", 1, /mithril\-bloom|faenor\-bloom|rhimar\-bloom|ora\-bloom|vultite\-bloom|thunderstone|doomstone|riftshard|geode|rosepar|firestone|bloodjewel|pearl|corestone|sard|sphene|jasper|marble|eostone|maoral|agate|amber|amethyst|blazestar|carbuncle|chalcedony|coral|despanal|diamond|emerald|feystone|garnet|gem|mica|thanot|glimaerstone|heliodor|hyacinth|jacinth|moonstone|onyx|quartz|ruby|sapphire|spinel|topaz|tourmaline|turquoise|zircon|peridot|starstone|dreamstone|deathstone|sunstone|sandsilver|bluerock|diopside|ivory|jade|bloodstone|cordierite|sardonyx|opal|stone|lapis|obsidian|beryl|mother\-of\-pearl|azurite|spherine|wyrdshard|riftstone|aetherstone|pyrite|hematite|saewehna|wraithaline|smoldereye|mekret|roestone|auboraline|wraithaline|waterweb|gypsum|feldspar|nephrite|pumice|rivertear|tanzanite|idocrase|cinderstone|sandruby|bismuth|fluorite|chrysoprase|prehnite|heliotrope|viridine|crescent/
+	
+	if result =~ /mithril\-bloom|faenor\-bloom|rhimar\-bloom|ora\-bloom|vultite\-bloom|thunderstone|doomstone|riftshard|geode|rosepar|firestone|bloodjewel|pearl|corestone|sard|sphene|jasper|marble|eostone|maoral|agate|amber|amethyst|blazestar|carbuncle|chalcedony|coral|despanal|diamond|emerald|feystone|garnet|gem|mica|thanot|glimaerstone|heliodor|hyacinth|jacinth|moonstone|onyx|quartz|ruby|sapphire|spinel|topaz|tourmaline|turquoise|zircon|peridot|starstone|dreamstone|deathstone|sunstone|sandsilver|bluerock|diopside|ivory|jade|bloodstone|cordierite|sardonyx|opal|stone|lapis|obsidian|beryl|mother\-of\-pearl|azurite|spherine|wyrdshard|riftstone|aetherstone|pyrite|hematite|saewehna|wraithaline|smoldereye|mekret|roestone|auboraline|wraithaline|waterweb|gypsum|feldspar|nephrite|pumice|rivertear|tanzanite|idocrase|cinderstone|sandruby|bismuth|fluorite|chrysoprase|prehnite|heliotrope|viridine|crescent/
+		Script.run "go2", "gemshop"
+
+		start_script('foreach', ["n=diamond in #{Vars.gemsack};get item;put item in #{Vars.gemsack2};stow all"]) 
+		wait_while{ running?('foreach') }
+		start_script('foreach', ["n=emerald in #{Vars.gemsack};get item;put item in #{Vars.gemsack2};stow all"]) 
+		wait_while{ running?('foreach') }
+		fput "remove #{Vars.lootsack}\n sell #{Vars.lootsack}\n wear #{Vars.lootsack}\n stow all"
+		pause
+		fput "remove #{Vars.lootsack2}\n sell #{Vars.lootsack2}\n wear #{Vars.lootsack2}\n stow all"
+		Script.run "foreach", "jewelry in inv", "get item;sell item;sell item;stow all"
+	end
+
+result = dothistimeout "look in #{Vars.lootsack}", 1, /vial of viscous liquid|small troll tooth|large troll tooth|ayanad crystal|s'ayanad crystal|t'ayanad crystal|n'ayanad crystal|glimmering blue essence shard|glowing violet essence shard|some essence of earth|some essence of air|some essence of fire|some glimmering blue essence dust|some glowing violet essence dust|radiant crimson essence shard|perfect myklian belly scale|crystalline globe|pepperthorn root|ayana weed|flask of pure oil|vial of pearlescent oil|essence shard|some essence of water|flask of pure water|flask of clear water|ayana leaf|ayana lichen|ayana root|empty flask|some faintly glowing dust|elemental core|crystal core|pristine nymph's hair|tiny golden seed|vial of farlook vitreous humor|inky necrotic core|some radiant crimson essence dust|glowing violet mote of essence|glimmering blue mote of essence|radiant crimson mote of essence|ayana berry|pristine sprite's hair|pristine siren's hair|dark glimmering crystal|some faintly radiant dust|vial of faintly glowing aelotoi tears|handful of sea salt|some waxy grey caederine|lump of black ambergris|lump of grey ambergris|essence of greater earth|essence of greater air|essence of greater fire|essence of greater water|cluster of ayanad crystals|cluster of s'ayanad crystals|cluster of t'ayanad crystals|cracked soulstone|jagged glossy black shard/
+	
+	if result =~ /vial of viscous liquid|small troll tooth|large troll tooth|ayanad crystal|s'ayanad crystal|t'ayanad crystal|n'ayanad crystal|glimmering blue essence shard|glowing violet essence shard|some essence of earth|some essence of air|some essence of fire|some glimmering blue essence dust|some glowing violet essence dust|radiant crimson essence shard|perfect myklian belly scale|crystalline globe|pepperthorn root|ayana weed|flask of pure oil|vial of pearlescent oil|essence shard|some essence of water|flask of pure water|flask of clear water|ayana leaf|ayana lichen|ayana root|empty flask|some faintly glowing dust|elemental core|crystal core|pristine nymph's hair|tiny golden seed|vial of farlook vitreous humor|inky necrotic core|some radiant crimson essence dust|glowing violet mote of essence|glimmering blue mote of essence|radiant crimson mote of essence|ayana berry|pristine sprite's hair|pristine siren's hair|dark glimmering crystal|some faintly radiant dust|vial of faintly glowing aelotoi tears|handful of sea salt|some waxy grey caederine|lump of black ambergris|lump of grey ambergris|essence of greater earth|essence of greater air|essence of greater fire|essence of greater water|cluster of ayanad crystals|cluster of s'ayanad crystals|cluster of t'ayanad crystals|cracked soulstone|jagged glossy black shard/
+	
+		Script.run "go2", "consignment"
+		start_script('foreach', ["reagent in inventory;get item;sell item"])
+		wait_while{ running?('foreach') }
+	
+	end
+
+result = dothistimeout "look in #{Vars.lootsack}", 1, /sliver of rough moonstone|piece of cloudy glass|shard of cloudy soulstone|golden piece of eight|ruby shard|luminescent sandstone chunk|whisper of divine essence|antique lockpick|fossilized shell|meteorite chipping|small blue clay mortar|marbled blue marble pestle|some grey-colored powder|thin-lipped clear glass bottle|blood-stained bandana|Elanthian Guilds Council token|ethereal chain|ethereal pendant|tiny ethereal orb|miniature (?:warrior|rogue|wizard|cleric|empath|sorcerer|ranger|bard|monk|paladin) figurine|polished stone|(?:oblong|glossy|shiny|slick|rounded|cubic|flat|ovoid|heavy|mottled) smooth stone|handful of (?:silver|gold|icy blue|iron|coral) flakes|(?:blue|yellow|red|black) cotton swathe|threaded (?:pink|grey|white|black|green) pearl|ornate statuette/
+	
+	if result =~ /sliver of rough moonstone|piece of cloudy glass|shard of cloudy soulstone|golden piece of eight|ruby shard|luminescent sandstone chunk|whisper of divine essence|antique lockpick|fossilized shell|meteorite chipping|small blue clay mortar|marbled blue marble pestle|some grey-colored powder|thin-lipped clear glass bottle|blood-stained bandana|Elanthian Guilds Council token|ethereal chain|ethereal pendant|tiny ethereal orb|miniature (?:warrior|rogue|wizard|cleric|empath|sorcerer|ranger|bard|monk|paladin) figurine|polished stone|(?:oblong|glossy|shiny|slick|rounded|cubic|flat|ovoid|heavy|mottled) smooth stone|handful of (?:silver|gold|icy blue|iron|coral) flakes|(?:blue|yellow|red|black) cotton swathe|threaded (?:pink|grey|white|black|green) pearl|ornate statuette/
+	
+		Script.run "go2", "28968"
+
+		start_script('foreach', ["collectible in inventory;get item;deposit item"])
+		wait_while{ running?('foreach') }
+	
+	end
+
+Script.run "go2", "pawnshop"
+	
+start_script('foreach', ["any in #{Vars.lootsack};sell item;sell item;stow all"]) 
+wait_while{ running?('foreach') }
+start_script('foreach', ["any in #{Vars.lootsack2};sell item;sell item;stow all"]) 
+wait_while{ running?('foreach') }
+
+fput "west"
+
+Script.run "go2", "bank"
+fput "deposit all"
+
+Script.run "trash"
+
+#Script.run "rest"

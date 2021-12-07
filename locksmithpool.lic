@@ -1,0 +1,64 @@
+Vars.tip = 100
+
+start_script('go2', [ "locksmith pool", '_disable_confirm_' ]);
+wait_while{ running?('go2') }
+	if Room.current.id == 17589
+		locksmith = "attendant"
+	elsif Room.current.id == 18687
+		locksmith = "gnome"
+	elsif Room.current.id == 3544
+		locksmith = "merchant"
+	elsif Room.current.id == 28718
+		locksmith = "woman"
+	elsif Room.current.id == 28717
+		locksmith = "woman"
+	elsif Room.current.id == 5751
+		locksmith = "dwarf"
+	elsif Room.current.id == 12537
+		locksmith = "attendant"	
+	elsif Room.current.id == 3807
+		locksmith = "worker"
+	elsif Room.current.id == 28719
+		locksmith = "Jahck"
+	elsif Room.current.id == 28937
+		locksmith = "worker"
+	end
+
+		fput "wear shield\n wear greatshield\n wear buckler\n wear aegis" if checkleft
+		pause
+		fput "give #{locksmith} #{Vars.tip}\n give #{locksmith} #{Vars.tip}" if checkright
+		pause
+		fput "swap\n give #{locksmith} #{Vars.tip}\n give #{locksmith} #{Vars.tip}" if checkleft
+		pause
+		fput "wear left\n wear right\n drop left\n drop right"
+
+		result = dothistimeout "ask #{locksmith} about list", 5, /50\.  A/
+			            if result =~ /50\.  A/
+			            	Vars.tip = 400 + rand(50)
+		                else
+			            	Vars.tip = 100 + rand(50)
+			        	end
+
+start_script('foreach', ["box in inv; get item; give #{locksmith} #{UserVars.tip};give #{locksmith} #{UserVars.tip}"]) 
+wait_while{ running?('foreach') }
+start_script('foreach', ["noun=case in inv; get item; give #{locksmith} #{UserVars.tip}; give #{locksmith} #{UserVars.tip}"]) 
+wait_while{ running?('foreach') }
+start_script('foreach', ["noun=coffer in inv; get item; give #{locksmith} #{UserVars.tip}; give #{locksmith} #{UserVars.tip}"]) 
+wait_while{ running?('foreach') }
+start_script('foreach', ["noun=trunk in inv; get item; give #{locksmith} #{UserVars.tip}; give #{locksmith} #{UserVars.tip}"]) 
+wait_while{ running?('foreach') }
+start_script('foreach', ["noun=chest in inv; get item; give #{locksmith} #{UserVars.tip}; give #{locksmith} #{UserVars.tip}"]) 
+wait_while{ running?('foreach') }
+start_script('foreach', ["noun=box in inv; get item; give #{locksmith} #{UserVars.tip}; give #{locksmith} #{UserVars.tip}"]) 
+wait_while{ running?('foreach') }
+start_script('foreach', ["noun=strongbox in inv; get item; give #{locksmith} #{UserVars.tip}; give #{locksmith} #{UserVars.tip}"]) 
+wait_while{ running?('foreach') }
+pause 2
+start_script('foreach', ["box in #{Char.name} disk; get item; give #{locksmith} #{UserVars.tip}; give #{locksmith} #{UserVars.tip}"]) 
+wait_while{ running?('foreach') }
+start_script('foreach', ["box in #{Char.name} coffin; get item; give #{locksmith} #{UserVars.tip}; give #{locksmith} #{UserVars.tip}"]) 
+wait_while{ running?('foreach') }
+fput "stow all"
+
+
+#fput "ask #{locksmith} for return"
