@@ -1,0 +1,206 @@
+loop{
+
+	if checkmind == "saturated"
+		kill_script "osam"
+		break if Vars.osa.to_i == 1
+		start_script "ttw"
+		Script.run "rest"
+		sleep 60
+	else
+		break
+	end
+
+}
+
+loop{
+
+	result = dothistimeout "bounty", 1, /You are eligible for new task assignment|You will be eligible for new task assignment|You succeeded in your task|You have succeeded in your task and|Be sure to ASK about BOUNTIES|Muddy Village|Cliffwalk|Widowmaker\'s Road|Black Weald/
+		
+		if result =~ /Muddy Village/
+			Vars.op['targets']="bandit, rogue, thief, robber, outlaw, highwayman, marauder, brigand, thug, mugger"
+			Vars.op['hunting_room_id']="29047"
+			Vars.op['hunting_boundaries']="29022"
+			Vars.banditSpot ="muddy"
+			fput "whisper group g reset bigshot now"
+			pause 5
+			fput "whisper group g group start boostabs now" if percentmind >= 90
+			exit
+
+		elsif result =~ /Cliffwalk/
+			Vars.op['targets']="bandit, rogue, thief, robber, outlaw, highwayman, marauder, brigand, thug, mugger"
+			Vars.op['hunting_room_id']="29124"
+			Vars.op['hunting_boundaries']="29026"
+			Vars.banditSpot ="cliffwalk"
+			fput "whisper group g reset bigshot now"
+			pause 5
+			fput "whisper group g group start boostabs now" if percentmind >= 90
+			exit
+
+		elsif result =~ /Widowmaker\'s Road/
+			Vars.op['targets']="bandit, rogue, thief, robber, outlaw, highwayman, marauder, brigand, thug, mugger"
+			Vars.op['hunting_room_id']="29021"
+			Vars.op['hunting_boundaries']="29047, 28978, 29124, 29124, 29227, 29030, 29056"
+			fput "whisper group g reset bigshot now"
+			pause 5
+			fput "whisper group g group start boostabs now" if percentmind >= 90
+			exit
+
+		elsif result =~ /Black Weald/
+			Vars.op['targets']="bandit, rogue, thief, robber, outlaw, highwayman, marauder, brigand, thug, mugger"
+			Vars.op['hunting_room_id']="29227"
+			Vars.op['hunting_boundaries']="29028"
+			Vars.banditSpot ="black"
+			fput "whisper group g reset bigshot now"
+			pause 5
+			fput "whisper group g group start boostabs now" if percentmind >= 90
+			exit
+
+		elsif result =~/You are eligible for new task assignment|Be sure to ASK about BOUNTIES/
+	
+			loop{
+
+				result = dothistimeout "whisper #{Vars.wizard} Are you ready for task yet", 5, /I am ready|What were you referring to/
+					if result =~ /I am ready|What were you referring to/
+						break
+					elsif result =~ /No i am not/
+						pause 15
+					end
+			}
+
+			pause
+
+			loop{
+
+				result = dothistimeout "whisper #{Vars.sorcerer} Are you ready for task yet", 5, /I am ready|What were you referring to/
+					if result =~ /I am ready|What were you referring to/
+						break
+					elsif result =~ /No i am not/
+						pause 15
+					end
+			}
+
+			pause
+
+			loop{
+
+				result = dothistimeout "whisper #{Vars.monk} Are you ready for task yet", 5, /I am ready|What were you referring to/
+					if result =~ /I am ready|What were you referring to/
+						break
+					elsif result =~ /No i am not/
+						pause 15
+					end
+			}
+
+			pause
+
+			loop{
+
+				result = dothistimeout "whisper #{Vars.rogue} Are you ready for task yet", 5, /I am ready|What were you referring to/
+					if result =~ /I am ready|What were you referring to/
+						break
+					elsif result =~ /No i am not/
+						pause 15
+					end
+			}
+
+			pause
+
+			loop{
+
+				result = dothistimeout "whisper #{Vars.bard} Are you ready for task yet", 5, /I am ready|What were you referring to/
+					if result =~ /I am ready|What were you referring to/
+						break
+					elsif result =~ /No i am not/
+						pause 15
+					end
+			}
+
+			pause
+
+			loop{
+
+				result = dothistimeout "whisper #{Vars.cleric} Are you ready for task yet", 5, /I am ready|What were you referring to/
+					if result =~ /I am ready|What were you referring to/
+						break
+					elsif result =~ /No i am not/
+						pause 15
+					end
+			}
+
+			loop{
+
+				result = dothistimeout "whisper #{Vars.paladin} Are you ready for task yet", 5, /I am ready|What were you referring to/
+					if result =~ /I am ready|What were you referring to/
+						break
+					elsif result =~ /No i am not/
+						pause 15
+					end
+			}
+
+			loop{
+
+				result = dothistimeout "whisper #{Vars.ranger} Are you ready for task yet", 5, /I am ready|What were you referring to/
+					if result =~ /I am ready|What were you referring to/
+						break
+					elsif result =~ /No i am not/
+						pause 15
+					end
+			}
+
+			loop{
+
+				result = dothistimeout "whisper #{Vars.warrior} Are you ready for task yet", 5, /I am ready|What were you referring to/
+					if result =~ /I am ready|What were you referring to/
+						break
+					elsif result =~ /No i am not/
+						pause 15
+					end
+			}
+
+			Script.run "go2", "advguild"
+			fput "ask task for task"
+			pause
+			Script.run "go2", "advguard"
+			fput "ask luth for bounty"
+			pause
+			Script.run "go2", "advguild"
+			fput "whisper group group remove task now"
+			pause 3
+			fput "ask task to add #{Vars.wizard}\n ask task to add #{Vars.sorcerer}\n ask task to add #{Vars.monk}\n ask task to add #{Vars.cleric}" if Char.name == "Wence"
+			fput "ask task to add #{Vars.wizard}\n ask task to add #{Vars.sorcerer}\n ask task to add #{Vars.monk}\n ask task to add #{Vars.cleric}" if Char.name == "Limbal"
+			fput "ask task to add #{Vars.wizard}\n ask task to add #{Vars.bard}\n ask task to add #{Vars.sorcerer}\n ask task to add #{Vars.cleric}" if Char.name == "Daumik"
+			fput "ask task to add #{Vars.wizard}\n ask task to add #{Vars.monk}\n ask task to add #{Vars.sorcerer}\n ask task to add #{Vars.bard}" if Char.name == "Raldrick"
+			fput "ask task to add #{Vars.cleric}\n ask task to add #{Vars.monk}\n ask task to add #{Vars.sorcerer}\n ask task to add #{Vars.wizard}" if Char.name == "Longle"
+			fput "ask task to add #{Vars.warrior}\n ask task to add #{Vars.monk}\n ask task to add #{Vars.paladin}\n ask task to add #{Vars.bard}" if Char.name == "Zeekai"
+			pause
+			Script.run "rest"
+			pause
+
+		elsif result =~/You will be eligible for new task assignment/
+			start_script "osam" if Vars.osa.to_i == 1
+			exit if Vars.osa.to_i == 1
+			Script.run "rest"
+			start_script "ttw"
+			pause 60
+
+		elsif result =~/You succeeded in your task and|You have succeeded in your task and/
+			Script.run "go2", "advguard"
+			fput "whisper group group turn in bounty now"
+			pause 4
+			Script.run "go2", "advguild"
+			fput "whisper group group turn in task now"
+			pause 5
+			fput "whisper group group turn in task now"
+			pause 5
+			Script.run "go2", "bank"
+			pause
+			fput "deposit all"
+			fput "whisper group g group deposit all now"
+			pause 3
+			Script.run "rest"
+			pause
+			Script.run "myturn"
+		end
+pause
+
+}
