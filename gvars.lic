@@ -1,0 +1,136 @@
+if "#{Char.name}" == "#{UserVars.leader}"
+	exit
+end
+
+while line = get
+	
+	if line =~ /dothis (.*) now/
+		dothis = $1
+		do_client "#{dothis}"
+		pause
+
+	elsif line =~/group ctr/
+		start_script "disband"
+		kill_script('bigshot')
+		kill_script('go2')
+		fput "stop 916"
+		fput "east"
+		start_script("rest")
+		wait_while { running?("rest")}
+		fput "incant 213" if Spell[213].known?
+		fput "join #{UserVars.leader}" if checkpcs "#{UserVars.leader}"
+		start_script('bigshot', [ "tail", '_disable_confirm_' ]);
+
+	elsif line =~/group gtr/
+		start_script("rest")
+		wait_while { running?("rest")}
+		fput "join #{UserVars.leader}" if checkpcs "#{UserVars.leader}"
+
+	elsif line =~/group restart univars now/
+		kill_script "univars"
+		start_script "univars"
+		pause
+
+	elsif line =~/group kbig/
+		kill_script('bigshot')
+
+	elsif line =~/group deposit all now/
+		fput "deposit all"
+	
+	elsif line =~/group ctm/
+		start_script('toname', [ "#{UserVars.leader}" ]);
+		wait_while{ running?('toname') }
+		pause
+		fput "join #{UserVars.leader}"
+
+	elsif line =~/group go gangplank/
+		if !checkpcs "#{Vars.leader}"
+			Script.run "go2", "29038"
+			fput "push gang\n go gang\n join #{Vars.leader}"
+		end
+
+
+
+	elsif line =~/All you manage to do is cough up some blood/
+		fput "prod #{Vars.empath}"
+
+	elsif line =~/unweb ([a-zA-Z,]+) ([0-9,]+) now/ and Char.name != Vars.leader and (Char.prof == "Empath" or Char.prof == "Cleric")
+		target = $1
+		room = $2
+		if checkmana >= 50
+			pause_script('bigshot')
+			waitcastrt?
+			waitrt?
+			start_script('go2', [ "#{room}", '_disable_confirm_' ]);
+			wait_while{ running?('go2') }
+			fput "hold #{target}"
+			Script.run "return"
+			pause 15
+			Script.run "rest"
+			Script.run "ghold"
+			fput "group lead #{Vars.leader}"
+			pause
+			unpause_script('bigshot')
+		end
+
+	elsif line =~ /ask for task now/
+		fput "ask task for task"
+
+	elsif line =~ /check for remove now/
+		
+		result = dothistimeout "bounty", 1, /#{Vars.mob1}|#{Vars.mob2}|#{Vars.mob3}|#{Vars.mob4}|#{Vars.mob5}|z#{Vars.mob6}|#{Vars.mob7}|#{Vars.mob8}|#{Vars.mob9}|#{Vars.mob10}|#{Vars.mob11}/
+   
+    		if result =~ /#{Vars.mob1}|#{Vars.mob2}|#{Vars.mob3}|#{Vars.mob4}|#{Vars.mob5}|z#{Vars.mob6}|#{Vars.mob7}|#{Vars.mob8}|#{Vars.mob9}|#{Vars.mob10}|#{Vars.mob11}/
+        		Vars.task = 1
+    		else
+    			fput "ask task for remove\n ask task for remove"
+    		end
+
+	elsif line =~ /You are unable to follow/ and muckled?
+		send_to_script "lnet", "chat group dont leave #{Char.name} #{Room.current.id} now" if !checkgrouped
+
+	elsif line =~ /There is not enough room to stand up in here/
+		pause_script "bigshot"
+		start_script('toname', [ "#{UserVars.leader}" ]);
+		wait_while{ running?('toname') }
+		fput "join #{UserVars.leader}"
+		pause 5
+		unpause_script "bigshot"
+
+	elsif line =~ /bigshotquick/
+		start_script('bigshot', ["quick"])
+		wait_while{ running?('bigshot') }
+
+	elsif line =~ /group attack ([a-zA-Z,]+) now/
+		target = $1
+		pause_script "bigshot"
+		fput "release\n incant 709 #{target}" if Spell[709].known?; echo "#{target}1"; waitcastrt?;echo "#{target}2"; fput "release\n incant 711 #{target}" if Spell[711].known?;
+		fput "release\n incant 917 #{target}" if Spell[917].known?; echo "#{target}1"; waitcastrt?;echo "#{target}2"; fput "release\n stance off\n incant 903 #{target}" if Spell[903].known?;
+		fput "release\n incant 214 #{target}" if Spell[214].known?; echo "#{target}1"; waitcastrt?;echo "#{target}2"; fput "release\n stance off\n incant 302 #{target}" if Spell[302].known?;
+		fput "stance off\n kick" if Char.prof == "Monk"
+		unpause_script "bigshot"
+
+	elsif line =~ /group attack now/
+		target = $1
+		pause_script "bigshot"
+		fput "release\n incant 711" if Spell[711].known?
+		fput "release\n incant 917" if Spell[917].known?; waitcastrt?; fput "release\n stance off\n incant 903" if Spell[903].known?
+		fput "release"; waitcastrt?; fput "release\n stance off\n incant 302" if Spell[302].known?;
+		fput "stance off\n kick" if Char.prof == "Monk"
+		unpause_script "bigshot"
+
+	elsif line =~ /group nuke em now/
+		#fput "release\n incant 1030" if Spell[1030].known?
+		#fput "release\n incant 135" if Spell[435].known?
+		fput "release\n incant 302" if Spell[302].known?
+		fput "stance off\n mstrike kick" if Skills.multiopponentcombat.to_i >= 30
+	
+	elsif line =~ /turn wheel ship now/
+		fput "turn wheel ship"
+
+	elsif line =~ /Player not found/ and Char.level >= 80
+		fput "east"
+
+
+	end
+end
