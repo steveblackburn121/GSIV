@@ -1,0 +1,504 @@
+if $frontend == 'stormfront'
+	fam_window_begin = "<pushStream id=\"familiar\" ifClosedStyle=\"watching\"/>"
+	fam_window_end   = "<popStream/>\r\n"
+else
+	fam_window_begin = "\034GSe\r\n"
+	fam_window_end   = "\034GSf\r\n"
+end
+
+### MAGICS
+
+while line = get
+
+	if line=~ /You already have a different spell readied/
+		fput "release"
+
+	elsif line =~/summon mana bread now/ and Spell[203].known?
+		start_script "203"
+
+	elsif line =~/You feel much stronger|A brilliant luminescence surrounds you|A deep blue glow surrounds you|Your form blurs/ and (Char.prof == "Monk" or Char.prof == "Bard" or Char.prof == "Warrior" or Char.prof == "Ranger" or Char.prof == "Paladin") and (Vars.mob1 == "gremlock" or Vars.mob1 == "adept" or Vars.mob1 == "dogmatist" or Vars.mob1 == "being" or Vars.mob1 == "shaper")
+	 	waitrt?
+	 	waitcastrt?
+
+		 	if line =~ /You feel much stronger/
+		 		fput "stop 509"
+	 		elsif line =~ /Your form blurs/
+	 			fput "stop 911"
+	 		elsif line =~ /A brilliant luminescence surrounds you/ and !Spell[414].known?
+		 		fput "stop 414"
+		 	elsif line =~ /A deep blue glow surrounds you/ and !Spell[107].known?
+		 		fput "stop 107"
+	 		end
+
+	elsif line =~ /group hideus now/ and Char.prof == "Cleric"
+	
+	pause
+	
+	result = dothistimeout "incant 220", 1, /and your surroundings shift/
+		if result =~ /and your surroundings shift/
+			pause 3
+	    else
+	    	fput "incant 213"
+	    	pause 3
+		end
+
+		fput "group lead #{Vars.leader}"
+
+	elsif line =~ /group unhideus now/ and Char.prof == "Cleric"
+		pause
+		fput "out"
+		pause
+		fput "hold #{Vars.leader}\n group lead #{Vars.leader}"
+
+	elsif line =~ /raise ([a-zA-Z,]+) now/ and Char.prof == "Cleric" and !Spell[9009].active?
+		target = $1
+		kill_script "bigshot"
+		start_script('toname', [ "#{target}" ]);
+		wait_while{ running?('toname') }
+		fput "incant 213" if checknpcs "#{Vars.mob1}", "#{Vars.mob2}", "#{Vars.mob3}" and !checkpcs "#{Vars.empath}"
+		waitrt?
+		waitcastrt?
+
+		loop{
+			
+			pause rand(2)
+				
+				result = dothistimeout "prep well of life\n cast #{target}", 1, /A silvery translucent thread extends from you encompassing|\,/
+		
+					if result =~ /A silvery translucent thread extends from you encompassing/
+						pause 16
+						fput "prep raise dead\n cast #{target}"
+						break
+					elsif result =~ /Raise Dead Cooldown: (.*)\,/
+						pause $1.gsub(':','').to_i
+						pause
+					else
+						pause 30
+					end
+		}
+
+elsif line =~/burst from the ground beneath you/
+	pause_script "bigshot"
+	Script.run("rest")
+	pause 5
+	unpause_script "bigshot"
+
+elsif line =~/make ([a-zA-Z,]+) leader now/
+		target = $1
+		Vars.leader = target
+
+elsif line =~/ridding the dead of any lodged projectiles or equipment/
+	kill_script "combo"
+
+elsif line =~/pass ([a-zA-Z,]+) lead now/ and !checkgrouped
+	target = $1
+	fput "group lead #{target}\n join #{target}"
+
+elsif line =~/give ([a-zA-Z,]+) lead now/
+	target = $1
+	kill_script "bigshot"
+	kill_script "killer"
+	fput "group lead #{target}\n join #{target}"
+	pause 2
+	start_script('toname', [ "#{target}", '_disable_confirm_' ]) if !checkpcs "#{target}" and Char.name =! target
+	wait_while{ running?('toname') }
+
+elsif line =~/group pirateboard now/
+	fput "turn board\n get board"
+
+elsif line =~/group get wood now/
+	fput "get wood" if !checkright "plank"
+
+elsif line =~/group fix now/
+	fput "fix"
+
+elsif line =~/group put wood now/
+	fput "put plank on wood"
+
+elsif line =~ /Perhaps you should try throwing or shooting something/ and (Char.prof == "Bard" or Char.prof == "Monk" or Char.prof == "Empath") and checkmana > 100 and Script.running? "bigshot"
+	pause_script "bigshot"
+	pause_script "killertofu"
+	fput "incant 1106" if Char.prof == "Empath"
+	start_script "1005" if Char.prof == "Bard"
+	start_script "1207" if Char.prof == "Monk"
+	unpause_script "bigshot"
+	unpause_script "killertofu"
+
+elsif line =~ /eat bread now/ and Char.prof != "Warrior" and Char.prof != "Rogue"
+	fput "get bread"
+	pause
+	fput "gobble my bread\n gobble my bread\n gobble my bread"
+
+elsif line =~ /Moving\!\!\!/
+		kill_script	"killertofu" if Script.running? "killertofu"
+		kill_script	"combo" if Script.running? "combo"
+
+elsif line =~ /Undisease ([a-zA-Z,]+) now/
+		target = $1
+		
+		if Spell[113].known? and Spell[113].affordable?
+			pause_script "bigshot"
+			sleep 0.1
+			waitrt?
+			waitcastrt?
+			sleep 0.1
+			fput "stance def\nrelease\nprep 113\ncast #{target}"
+			unpause_script "bigshot"
+		end
+
+	elsif line =~ /Unpoison ([a-zA-Z,]+) now/
+		target = $1
+		
+		if Spell[114].known? and Spell[114].affordable?
+			pause_script "bigshot"
+			sleep 0.1
+			waitrt?
+			waitcastrt?
+			sleep 0.1
+			fput "stance def\nrelease\nprep 114\ncast #{target}"
+			unpause_script "bigshot"
+		end
+
+	elsif line =~ /You can't do that while singing Song of Peace/
+		fput "stop 1011"
+
+### EVOKE INVIS
+
+	elsif line =~ /Are you done yet/ and Char.name != Vars.leader
+		result = dothistimeout "bounty", 1, /You succeeded in your task|You have succeeded in your task and|You are not currently assigned a task|Be sure to ASK about BOUNTIES/
+		if result =~ /You succeeded in your task|You have succeeded in your task and|You are not currently assigned a task|Be sure to ASK about BOUNTIES/
+			fput "whisper #{Vars.leader} I am done"
+		else
+			fput "whisper #{Vars.leader} No i am not"
+		end
+
+	elsif line =~ /Are you ready for task yet/ and Char.name != Vars.leader
+		result = dothistimeout "bounty", 1, /You are eligible for new task assignment|Be sure to ASK about BOUNTIES|to complete your task/
+		if result =~ /You are eligible for new task assignment|Be sure to ASK about BOUNTIES|to complete your task/
+			fput "whisper #{Vars.leader} I am ready"
+		else
+			fput "whisper #{Vars.leader} No i am not"
+		end
+
+	elsif line =~ /turn in bounty now/
+		fput "ask guard for bounty\n ask luth for bounty"
+
+	elsif line =~ /get task now/
+		fput "ask task for task"
+
+	elsif line =~ /get bounty now/
+		fput "ask luth for bounty"
+
+	#elsif line =~ /share task now/
+	#	fput "ask task to add #{Vars.bard}"
+
+	elsif line =~ /turn in task now/
+		fput "ask task for task"
+		Vars.task = 0
+
+	elsif line =~ /remove task now/ and (Char.prof != "Empath")
+		fput "ask task for remove\n ask task for remove"
+
+	elsif line =~/group invis now/ and Spell[916].known? and Skills.elair >= 50
+		Script.run "ghold"
+		fput "prep 916\n evoke"
+
+### BLESS TARGET'S BOOTS
+
+	elsif line =~/bless ([a-zA-Z,]+) now/ and Char.prof == "Cleric"
+		pause_script "killertofu"
+		target = $1
+
+		pause 2
+		fput "prep bless\n cast #{target}"
+
+		unpause_script "killertofu"
+
+### STOP A SPELL BY NUMBER - group stop 916 now
+
+	elsif line =~/group stop ([0-9,]+) now/
+		target = $1
+		fput "stop #{target}"
+		
+### SCRIPTS
+
+	elsif line =~/group start (.*) now/
+		target = $1
+		start_script "#{target}"
+		
+
+	elsif line =~/group kill (.*) now/
+		target = $1
+		kill_script "#{target}"
+		
+
+	elsif line =~/group restart (.*) now/
+			target = $1
+			kill_script "#{target}"
+			start_script "#{target}"
+
+	elsif line =~/group k bigshot tail now/ and Char.name != Vars.leader
+			pause
+			kill_script "bigshot"
+
+	elsif line =~/group s bigshot tail now/ and Char.name != Vars.leader
+			pause
+			start_script('bigshot', [ "tail" ])
+
+### OHH YES
+
+	elsif line =~/It be your turn it do/
+		
+		if Char.prof == "Empath"
+			fput "whisper #{Vars.leader} It be his turn it do"
+			kill_script "myturn"
+		end
+
+	elsif line =~/group return us now/
+		fput "symbol return"
+
+	elsif line =~/group cte/
+		kill_script "bigshot"
+		kill_script "killertofu"
+		start_script('toname', [ "#{Vars.empath}" ]);
+		wait_while{ running?('toname') }
+		fput "join #{Vars.empath}"
+
+	elsif line =~ /group ttw/
+		start_script('gwag')
+		
+	elsif line =~ /group tts/
+		fput "mana spellup"
+
+	elsif line =~ /group tte/
+		fput "exit"
+
+### JAILBOT
+
+	elsif line =~/You may ANSWER me either FINE/
+		echo "alarmbot"
+		pause
+		fput "answer yes\n answer fine"
+		fput "answer yes\n answer fine"
+		Script.run "go", "bank"
+		fput "withdraw 1"
+		Script.run "go", "jail"
+		fput "open box"
+		start_script('foreach', ["any in box;get item from box;wear item ;stow all"]) 
+		wait_while{ running?('foreach') }
+		
+		loop{
+
+			echo "alarmbot"
+			pause 5
+			
+			}
+
+	elsif line =~/ANSWER YES if you are within/
+		fput "answer yes"
+		loop{
+			echo "alarmbot"
+			pause 5
+			}
+
+### BOUND?
+	
+	elsif line =~ /You are unable to do that right now/
+		pause_script "bigshot"
+		pause 5
+		unpause_script "bigshot"
+	
+	elsif line =~ /For some reason, you are unable to do that/
+		echo "alarmbot"
+		pause 5
+
+### MISC
+
+	elsif line =~/failed to find a path between your current room/
+		echo "broken"
+		kill_script "go2"
+
+	elsif line =~/reset group now/
+			pause
+
+			pause if Char.prof == "Empath"
+			pause 2 if Char.prof == "Wizard"
+			pause 3 if Char.prof == "Sorcerer"
+			pause 4 if Char.prof == "Cleric"
+			pause 5 if Char.prof == "Bard"
+			pause 6 if Char.prof == "Monk"
+			fput "whisper group I #{Char.name} am the #{Char.prof} master!"
+
+	elsif line =~/group reso now/
+		
+		result = dothistimeout "reso", 1, /\(Weekly\)     ([0-9,]+)\/200,000 \(Total\)/
+			
+			if result =~ /\(Weekly\)     ([0-9,]+)\/200,000 \(Total\)/
+				target = $1.gsub(',','').to_i
+				fput "whisper group #{target} #{Char.prof} total"
+			end
+
+	elsif line =~ /group stay put now/ and Char.name != Vars.leader
+		Script.run "stayPut"
+
+	elsif line =~ /You feel a sudden jolt of nothing short of the raw power of divine intervention/
+		start_script "waggle" if Society.status != "Order of Voln"
+
+	elsif line =~/The sense of peace and security passes away from the area|group 213 now/ and (Room.current.id == 29253 or Room.current.id == 28932 or Room.current.id == 25233 or Room.current.id == 11814 or Room.current.id == 137 or Room.current.id == 9872 or Room.current.id == 11917 or Room.current.id == 10147 or Room.current.id == 10062 or Room.current.id == 9824 or Room.current.id == 11369 or Room.current.id == 137 or Room.current.id == 10007 or Room.current.id == 11868 or Room.current.id == 11993 or Room.current.id == 1827 or Room.current.id == 10628) and Spell[213].known?
+		if Char.prof == "Empath"
+			fput "incant 213"
+		elsif Char.prof == "Cleric"
+			fput "incant 213"
+		end
+
+	elsif line =~ /all of the glyphs pop out/
+		pause_script('go2')
+		pause rand(5)
+		unpause_script('go2')
+
+	elsif line =~/I could not find what you were referring to/ and (Room.current.id == 10882 or Room.current.id == 11354)
+		kill_script('go2')
+
+	elsif line =~ /Where are you trying to go/ and (Room.current.id == 11372 or Room.current.id == 11371)
+		if !checkpcs "#{Vars.leader}"
+			fput "go door"
+		end
+
+	elsif line =~ /get out now/ and Room.current.id == 12259
+		fput "crawl open"
+
+### TPICK
+
+	elsif line =~ /You want to disarm what?/ and Script.running? "tpick"
+		kill_script "tpick"
+		Script.run "rt"
+		fput "stow all"
+		start_script('tpick', [ "worker"])
+
+	elsif line =~ /Who are you trying to ask\?/ and Script.running? "tpick"
+		kill_script "tpick"
+		pause 5
+		start_script('tpick', [ "worker"])
+
+	elsif line =~ /You figure that if you had a file or a dagger of some sort/ and Script.running?("tpick")
+		kill_script "tpick"
+		fput "get my still"
+		start_script('tpick', [ "worker"])
+
+	elsif line =~ /Remove what\?/ and Script.running?("tpick")
+		fput "remove my tool"
+		pause 5
+		fput "wear my tool"
+
+	elsif line =~ /You have 1 lump of putty|You have 1 ball of cotton|You figure that if you had some sort of putty/
+    	kill_script "tpick"
+    	start_script('go2', [ "bank", '_disable_confirm_' ]);
+		wait_while{ running?('go2') }
+		fput "withdraw 200"
+		start_script('go2', [ "locksmith", '_disable_confirm_' ]);
+		wait_while{ running?('go2') }
+		fput "remove my toolkit\n order 11\n buy\n open my toolkit"
+		fput "open my other toolkit"
+		fput "bundle\n wear other toolkit\n wear my toolkit\n drop my toolkit"
+		start_script('go2', [ "locksmith pool", '_disable_confirm_' ]);
+		wait_while{ running?('go2') }
+		start_script('tpick', [ "worker"])
+	
+### LEADERSWITCH
+		
+		elsif line =~ /I ([a-zA-Z,]+) am the ([a-zA-Z,]+) master\!/
+		targ = $1
+		prof = $2
+
+			if prof == "Empath"
+				Vars.empath = targ
+				Vars.ff1 = targ
+				echo Vars.empath
+			elsif prof == "Wizard"
+				Vars.wizard = targ
+				Vars.ff2 = targ
+				echo Vars.wizard
+			elsif prof == "Sorcerer"
+				Vars.sorcerer = targ
+				Vars.ff3 = targ
+				echo Vars.sorcerer
+			elsif prof == "Cleric"
+				Vars.cleric = targ
+				Vars.ff4 = targ
+				echo Vars.cleric
+			elsif prof == "Bard"
+				Vars.bard = targ
+				Vars.ff5 = targ
+				echo Vars.bard
+			elsif prof == "Monk"
+				Vars.monk = targ
+				Vars.ff6 = targ
+				echo Vars.monk
+			end
+
+###TDUSK
+
+	elsif line =~ /A white-robed human healer walks over to you and heals you of all your injuries/
+		kill_script "tdusk"
+		start_script "waggle"
+		pause 30
+		fput "throw my package\n throw my package"
+		Script.run "go2", "exit"
+		fput "go wagon"
+		Script.run "go2", "pawnshop"
+		Script.run "foreach", "any in my backpack;sell item;sell item;stow all"
+		Script.run "foreach", "n=ore in my backpack;drop item;login "
+		Script.run "go2", "bank"
+		fput "depo all"
+		Script.run "go2", "pawnshop"
+		fput "quest trans dusk\n quest trans dusk"
+		start_script "btd"
+	
+	elsif line =~ /What were you referring to?/ and Script.running? "combo"
+		kill_script "combo"
+
+###BANDITS
+		
+	elsif line =~/into hiding|flies from the shadows towards|gesturing at nothingness/ and Char.prof == "Wizard"
+		pause_script "bigshot"
+		pause_script "killertofu"
+		fput "incant 410"
+		unpause_script "bigshot"
+		unpause_script "killertofu"
+
+	elsif line =~ /YOU HAVE BEEN IDLE TOO LONG. PLEASE RESPOND./ and Script.running? "myturn"
+		fput "whisper group g group start gwag now"
+
+###EXTRAS
+
+	elsif line =~ /Head out to the wilds and go berserk on some critter you find challengin for your skill rank/
+		kill_script "warrior"
+		start_script "bigshot"
+		waitfor "You have completed this task"
+		kill_script "bigshot"
+		pause 15
+		fput "stop berserk"
+		Script.run "warrior", "berserk"
+
+
+	elsif line =~ /poke time now/
+
+		if Char.name == Vars.leader
+
+			while line = get
+			case line
+
+				when /offers you a purple paeline poke/
+					fput "accept\n sell poke\n sell poke\n drop poke"
+					pause
+					fput "stow all"
+					break
+				end
+			end
+		else
+			pause
+			fput "get my poke\n give #{Vars.leader}"
+		end
+
+	end
+end
