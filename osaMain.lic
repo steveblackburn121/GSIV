@@ -1,0 +1,402 @@
+pause
+
+kill_script "bcheck"
+exit if Vars.osa.to_i != 1
+
+if Vars.ship == "carrack"
+	hold = 29861
+	crew = 29866
+	mess = 29867
+	main = 29860
+	forw = 29865
+	bow = 29868
+	helm = 29863
+	capt = 29863
+	nest = 29862
+end
+
+before_dying {kill_script "cleanup" and kill_script "navi"}
+
+task = proc {
+
+	echo "Attempting to turn in task"
+
+	if Vars.bcheck.to_i == 1
+		Script.run "rest"
+		start_script "bcheck"
+		exit
+	else
+		goto "start"
+	end
+}
+
+turnIn = proc{
+
+	Script.run "go2", "handler"
+	Script.run "osahandler"
+	#Script.run "traderj"
+	Script.run "ploot"
+	task.call
+}
+
+navi = proc{
+	
+	Script.run "navi"
+	pause
+	turnIn.call
+
+}
+
+enc = proc{
+
+	navi.call
+	
+	#if percentencumbrance > 50
+	#	navi.call
+	#else
+	#	goto "sail"
+	#end
+
+}
+
+raze = proc{
+	fput "raze\n raze"
+	pause 5
+	fput "go gang\n go west"
+	waitfor "You gain some experience"
+	enc.call
+}
+
+search = proc{
+	
+	fput "search pile"
+	while line = get
+	case line
+
+		when /Enemies Left/
+			fput "out\n e"
+			goto "combat"
+		when /but find nothing of in/
+			pause 5
+			search.call
+		when /and pull out/
+			pause 5
+			fput "put #{checkright} in #{Vars.lootsack}\n put #{checkright} in #{Vars.lootsack2}\n put #{checkright} in #{Vars.lootsack3}"
+			search.call
+		when /This will bind it to the following|How do you plan to do that with your hands full/
+			fput "search pile"
+			pause 5
+			fput "put #{checkright} in #{Vars.lootsack}\n put #{checkright} in #{Vars.lootsack2}\n put #{checkright} in #{Vars.lootsack3}"
+			fput "out\n e"
+			raze.call
+		else
+
+		end
+	
+	end
+}
+
+loot = proc{
+
+		fput "whisper group g group kill 140 now"
+		fput "whisper group g group kill 919 now"
+		pause 0.1
+		fput "stand"
+		waitrt?
+		fput "d\n get crate\n u\n go gang"
+		pause
+		fput "d\n put crate on wood\n drop crate"
+		fput "u\n go gang\n w\n go door"
+		search.call
+
+}
+
+repair = proc{
+
+	pause
+	kill_script "checkright"
+	Script.run "ghold"
+	fput "go gang"
+	Script.run "repair"
+	Script.run "go2", "#{main}"
+	fput "go gang"
+	loot.call
+}
+
+combat = proc{
+
+		loop{
+
+			result = dothistimeout "listen", 1, /Enemies Left\:|something large coming your way|You listen, but don't hear anything unusual|You've cleared out all the enemies/
+
+				if result =~ /Enemies Left|something large coming your way/
+					pause 5
+					fput "whisper group g group start piratekiller now"
+					start_script "piratekiller"
+					pause 5
+
+				elsif result =~ /You listen, but don't hear anything unusual/
+					echo "Alarmbot"
+					pause 5
+				else
+					pause 5
+					repair.call
+				end
+		}
+
+}
+
+boardEnemy = proc{
+
+	#send_to_script "lnet", "chat g group kill osar now"
+	Script.run "cte"
+	pause 5
+	Script.run "ghold"
+	pause 5
+	fput "incant 213"
+	waitfor "collide against your"
+	Script.run "go2", "#{main}"
+	fput "push gangplank"
+	
+	result = dothistimeout "go gangplank", 1, /You make your way across/
+		if result =~ /You make your way across/
+		else
+			Script.run "go2", "#{main}"
+			fput "push gangplank\n go gangplank"
+		end
+	
+	send_to_script "lnet", "chat g group start gird now"
+	pause 0.1
+	fput "prep light\n evoke"
+	fput "whisper group g group start 909 now"
+	fput "whisper group g group start 710 now"
+	fput "whisper group g group start 418 now" if !checkpcs "#{Vars.bard}"
+	fput "whisper group g group start 525 now" if !checkpcs "#{Vars.bard}"
+	start_script "badjuju"
+	start_script "unstun"
+	start_script "checkright"
+	fput "incant 106"
+	combat.call
+
+}
+
+ship = proc{
+echo "Engaging Ship"
+
+	Script.run "go2", "#{main}"
+	start_script "ttw"
+	pause 0.1
+	waitfor "almost in boarding range"
+	boardEnemy.call
+
+}
+
+sail = proc{
+echo "Sailing"
+
+	Script.run "go2", "#{helm}"
+	fput "turn wheel n"
+	start_script "cleanup"
+	#Script.run "turner"
+	
+
+	while line = get
+		
+		if line =~ /The wooden wheel slowly turns off course/
+			fput "turn wheel n"
+
+		elsif line =~ /materializes next to your ship|like a cutlass on flesh|ripping through the ocean toward|A sudden booming of cannon fire/
+			Script.run "go2", "#{helm}"
+			fput "whisper #{Vars.navigator} group turn wheel ship now"
+			pause 5
+			#fput "turn wheel ship"
+			ship.call
+		end
+	end
+}
+
+flag = proc{
+
+	result = dothistimeout "ship flag", 1, /is currently flying a black flag/
+		if result !~ /is currently flying a black flag/
+			Script.run "go2", "#{nest}"
+			fput "ship flag black"
+		end
+		
+		sail.call
+}
+
+depart = proc{
+
+echo "Departing"
+pause
+
+	Script.run "osaUnderway"
+	fput "out"
+	flag.call
+}
+
+board = proc{
+
+fput "whisper group g group kbig now"
+pause
+fput "whisper group g group start keepal now"
+
+echo "Attempting to board ship"
+
+	result = dothistimeout "look #{Vars.ship}", 1, /#{Vars.shipName}/
+	if result =~ /#{Vars.shipName}/
+		fput "go gangplank\n go #{Vars.ship}"
+		depart.call
+	else
+	
+		fput "se"
+
+		result = dothistimeout "look #{Vars.ship}", 1, /#{Vars.shipName}/
+		if result =~ /#{Vars.shipName}/
+			fput "go gangplank\n go #{Vars.ship}"
+			depart.call
+		else
+
+			fput "se"
+
+			result = dothistimeout "look #{Vars.ship}", 1, /#{Vars.shipName}/
+			if result =~ /#{Vars.shipName}/
+				fput "go gangplank\n go #{Vars.ship}"
+				depart.call
+			else
+				
+				fput "se"
+
+				result = dothistimeout "look #{Vars.ship}", 1, /#{Vars.shipName}/
+				if result =~ /#{Vars.shipName}/
+					fput "go gangplank\n go #{Vars.ship}"
+					depart.call
+				else
+					
+					fput "se"
+					
+					result = dothistimeout "look #{Vars.ship}", 1, /#{Vars.shipName}/
+					if result =~ /#{Vars.shipName}/
+						fput "go gangplank\n go #{Vars.ship}"
+						depart.call
+					else
+					
+						exit
+
+					end
+				end
+			end
+		end
+	end
+
+}
+
+start = proc{
+
+
+	fput "set groupmove on"
+	fput "whisper group g group start stand now"
+
+	echo "Attempting to retreive ship"
+
+	Script.run "go2", "bank"
+	fput "withdraw 10000 silvers"
+	Script.run "go2", "28897"
+	fput "ask handler to ret #{Vars.ship}"
+	pause
+	fput "ask handler to ret #{Vars.ship}"
+	
+	while line = get
+	case line
+		
+	when /Third Pier/
+			
+			echo "Heading to Third Pier"
+			pier = "third"
+			fput "ask handler to stock wood\n ask handler to stock wood"
+			Script.run "go2", "bank"
+			fput "whisper group g group deposit all now"
+			fput "deposit all"
+			Script.run "go2", "28897"
+			fput "go catwalk\n e"
+			board.call
+
+
+		when /Fourth Pier/
+			
+			echo "Heading to Fourth Pier"
+			pier = "fourth"
+			fput "ask handler to stock wood\n ask handler to stock wood"
+			Script.run "go2", "bank"
+			fput "whisper group g group deposit all now"
+			fput "deposit all"
+			Script.run "go2", "28897"
+			fput "go catwalk\n e\n ne"
+			board.call
+
+		when /Your ship was recently damaged/
+			echo "Repairing ship"
+			Script.run "go2", "bank"
+			fput "withdraw 100000 silvers"
+			Script.run "go2", "28994"
+			fput "ask boatswain to repair #{Vars.ship}"
+			fput "ask boatswain to repair #{Vars.ship}"
+			goto "start"
+
+		when /Your ship is still under repair/
+			echo "Waiting for repairs"
+			Script.run "go2", "bank"
+			fput "depo all"
+			Script.run "rest"
+			pause 30
+			start_script "bcheck" if Vars.bcheck.to_i == 1
+			exit if Vars.bcheck.to_i == 1
+			Script.run "ttw"
+			goto "start"
+		end
+	end
+
+}
+
+if variable[1].downcase =~ /board/
+	board.call
+elsif variable[1].downcase =~ /depart/
+	depart.call
+elsif variable[1].downcase =~ /sail/
+	sail.call
+elsif variable[1].downcase =~ /ship/
+	ship.call
+elsif variable[1].downcase =~ /combat/
+	combat.call
+elsif variable[1].downcase =~ /loot/
+	loot.call
+elsif variable[1].downcase =~ /search/
+	search.call
+elsif variable[1].downcase =~ /raze/
+	raze.call
+elsif variable[1].downcase =~ /repair/
+	repair.call
+elsif variable[1].downcase =~ /enc/
+	enc.call
+elsif variable[1].downcase =~ /navi/
+	navi.call
+elsif variable[1].downcase =~ /turn/
+	turnIn.call
+elsif variable[1].downcase =~ /task/
+	task.call
+else
+	start.call
+end
+
+start:
+start.call
+
+depart:
+depart.call
+
+sail:
+sail.call
+
+combat:
+combat.call

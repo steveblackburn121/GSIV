@@ -1,0 +1,63 @@
+room = nil
+
+if Vars.ship == "brigantine"
+	hold = 29846
+	crew = 29851
+	mess = 29852
+	main = 29845
+	forw = 29850
+	helm = 29848
+	capt = 29849
+	nest = 29847
+end
+
+repairCheck = proc{
+
+	loop{
+
+		if !checkright "plank"
+			Script.run "go2", "#{hold}"
+			fput "whisper group g group get wood now"
+			pause 5
+		end
+			
+		Script.run "go2", "#{room}"
+			
+		result = dothistimeout "assess", 1, /You cannot seem to find any damage|repair all the damage/
+			
+			if result =~ /You cannot seem to find any damage|repair all the damage/
+				pause 3
+				break
+			else
+				pause 3
+				fput "fix"
+				send_to_script "lnet", "chat g group dothis fix now"
+				pause 5
+				break
+			end
+
+		}
+}
+
+
+room = hold
+repairCheck.call
+room = crew
+repairCheck.call
+room = mess
+repairCheck.call
+room = main
+repairCheck.call
+room = forw
+repairCheck.call
+room = helm
+repairCheck.call
+room = capt
+repairCheck.call
+room = nest
+repairCheck.call
+
+Script.run "go2", "#{hold}"
+fput "whisper group g group put wood now"
+pause
+
