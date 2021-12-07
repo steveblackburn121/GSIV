@@ -1,0 +1,159 @@
+if Char.name != Vars.leader
+	exit
+end
+
+if $frontend == 'stormfront'
+	fam_window_begin = "<pushStream id=\"familiar\" ifClosedStyle=\"watching\"/>"
+	fam_window_end   = "<popStream/>\r\n"
+else
+	fam_window_begin = "\034GSe\r\n"
+	fam_window_end   = "\034GSf\r\n"
+end
+
+while line = get
+
+	if line =~/vanishes into nothingness with a hollow laugh|leaps into the shadows/ and checknpcs "arm", "arms"
+		pause_script "bigshot"
+		sleep 5
+		unpause_script "bigshot"
+
+	elsif line =~/You can't make that dextrous of a move|You're not in any condition to be searching around/
+		Vars.bigshot="rest"
+
+	elsif line =~/You are unable to move in close enough to whisper/
+		send_to_script "lnet", "chat g group start bandittofu now"
+		pause 5
+
+	elsif line =~/It be his turn it do/
+		send_to_script "lnet", "chat group stop 916 now"
+		pause
+		Script.run "ghold"
+		kill_script "myturn"
+
+	elsif line =~ /of air as you notice|falls into a well concealed shallow pit of spikes|the ground gives out from under you/ and checkpcs.count <= Vars.gs.to_i
+		send_to_script "lnet", "chat g group start bandittofu now"
+
+	elsif line =~/is unable to follow you/ 
+		fput "whisper group g group restart bandittofu now"
+		pause 5
+
+	elsif line =~/All you manage to do is cough up some blood/
+		kill_script "bigshot"
+		kill_script "bcheck"
+		pause_script "stand"
+		Script.run "ctr"
+		Script.run "go2", "healer"
+		fput "lie"
+		waitfor "spit out the last of the blood clogging your throat"
+		Script.run "rest"
+		Script.run "ghold"
+		Script.run "bcheck"
+		unpause_script "stand"
+
+	elsif line =~ /won't fit in the charcoal wool cloak|won't fit in thestygian suede cloak|unable to fit/ 
+		Vars.bigshot="rest"
+
+	elsif line =~ /Why don't you take care of that on your own/
+		pause_script "locksmithpool"
+		fput "open right\n loot right\n get my coins"
+		pause 4
+		fput "drop right"
+		unpause_script "locksmithpool"
+
+	elsif line =~/had a polished red steel Hammer of Kai/
+		pause_script "bigshot"
+		pause 0.1
+		fput "get hammer\n stow hammer\n put hammer in #{Vars.lootsack2}"
+		pause
+		unpause_script "bigshot"
+
+	elsif line =~/Silver check now/ and Char.name != "Wence"
+
+		result = dothistimeout "bank acc", 1, /Total: ([0-9,]+)/
+			
+			pause rand(2)
+			if result =~ /Total: ([0-9,]+)/
+				target = $1
+				send_to_script "lnet", "chat to Wence #{Char.name} Have #{target} silvers"
+			end
+
+	elsif line =~/Gimme dat now/ and char.name != "Wence"
+		
+		if Room.current.id == 10156
+			start_script('jfloo')
+			wait_while{ running?('jfloo') }
+		end
+		
+		start_script('toname', [ "Wence", '_disable_confirm_' ]) if !checkpcs "#{target}"
+		wait_while{ running?('toname') }
+		fput "check bala"
+
+	elsif line =~ /You don't have that much on you/ and Script.running?("locksmithpool")
+		fput "stow all\n put right in disk\n put left in disk"
+		pause_script "locksmithpool"
+		start_script('go2', [ "bank", '_disable_confirm_' ]);
+		wait_while{ running?('go2') }
+		fput "withdraw 5000"
+		start_script('go2', [ "locksmith pool", '_disable_confirm_' ]);
+		wait_while{ running?('go2') }
+		unpause_script "locksmithpool"
+
+   elsif line =~ /is already open/ and Script.running? ("locksmithpool")
+       	waitrt?
+       	fput "drop right"
+
+    elsif line =~ /is already unlocked.  Just open it/ and Script.running? ("locksmithpool")
+    	pause_script "locksmithpool"
+    	waitrt?
+       	fput "open right\n get my coins"
+       	waitrt?
+       	pause 1
+       	fput "empty right into #{Vars.lootsack}\n empty right into coat\n empty right into my cloak"
+       	waitrt?
+       	pause 1
+       	fput "drop right"
+       	unpause_script "locksmithpool"
+        
+	elsif line =~ /You kneel down and pull (.*) lifeless body/
+		target = $1
+		echo "#{target} is dead!!!"
+		echo "alarmbot"
+		_respond("#{fam_window_begin} #{target} is DEAD #{Time.now} #{Room.current.id} #{fam_window_end}")
+
+	elsif line =~/group restart univars now/
+		kill_script "univars"
+		start_script "univars"
+		pause
+
+	elsif line =~ /You are unable to handle the additional load/
+		if Room.current.id == 12282 or Room.current.id== 10434 or Room.current.id== 10943 or Room.current.id== 4024
+			pause_script "sloot"
+			start_script('go2', [ "bank", '_disable_confirm_' ]);
+			wait_while{ running?('go2') }
+			fput "depo all\n withdraw 5000"
+			start_script('go2', [ "locksmith", '_disable_confirm_' ]);
+			wait_while{ running?('go2') }
+			unpause_script "sloot"
+		end
+
+	elsif line =~ /You need to lighten your load first/
+		pause 5
+		kill_script "poolparty"
+
+	elsif line =~ /but you can't quite get|but nothing will fit/ and Script.running?("poolparty")
+		pause
+		fput "drop right\n drop left"
+		pause
+		unpause_script "poolparty"
+
+	elsif line =~ /won't fit in the|but nothing will fit/ and Script.running?("locksmithpool")
+		fput "put right in coat\n put right in cloak\n put right in disk\n put right in knapsack"
+		fput "put left in coat\n put left in cloak\n put left in disk\n put left in knapsack"
+
+	elsif line =~ /forward as it strains against the deployed anchor|The sound of ropes coming free of the rigging prelude|The sound of the anchor can be heard ratting down/
+		Script.run "osaunderway"
+		Script.run "go2", "29848"
+		fput "turn wheel ship"
+
+	end
+end
